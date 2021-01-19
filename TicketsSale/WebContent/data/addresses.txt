@@ -1,0 +1,2 @@
+Street 1;Novi Sad;21000
+Street 2;Beograd;11000

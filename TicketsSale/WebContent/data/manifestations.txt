@@ -1,0 +1,3 @@
+#Naziv;tip;Broj mesta;Datum i vreme odrzavanja;cena regular karte;status;lokacija;poster manifestacije
+ARA MALIKIAN;CONCERT;350;18.02.2021. 19:00;800;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/001/387/ara-malikian-474-279-13499.jpg
+Antivirus;THEATER;500;13.02.2021. 19:00;1000;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/002/457/darko-mitrovic-antivirus-474-279-14058.png
