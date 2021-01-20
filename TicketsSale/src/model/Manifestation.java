@@ -1,6 +1,5 @@
 package model;
 
-import java.awt.Image;
 import java.util.Date;
 
 public class Manifestation {
@@ -11,10 +10,10 @@ public class Manifestation {
 	private double priceOfRegularTicket;
 	private ManifestationState state;
 	private Location location;
-	private Image image;
+	private String url;
 	
 	public Manifestation(String name, TypeOfManifestation type, int numberOfSeats, Date date,
-			double priceOfRegularTicket, ManifestationState state, Location location, Image image) {
+			double priceOfRegularTicket, ManifestationState state, Location location, String url) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -23,7 +22,7 @@ public class Manifestation {
 		this.priceOfRegularTicket = priceOfRegularTicket;
 		this.state = state;
 		this.location = location;
-		this.image = image;
+		this.url = url;
 	}
 
 	public String getName() {
@@ -82,11 +81,11 @@ public class Manifestation {
 		this.location = location;
 	}
 
-	public Image getImage() {
-		return image;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setImage(Image image) {
-		this.image = image;
+	public void setImage(String url) {
+		this.url = url;
 	}
 }

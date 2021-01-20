@@ -1,10 +1,27 @@
 Vue.component("home", {
-  props: ["manifestations"],
   methods: {
     displayCard: function (name) {
-      alert("home alert");
-      this.$emit("displayCard", name);
+      //uzmi name i stavi u data da imamo selected neki i onda kad otvori rutu da se prikaze selected
+      this.selectedManifestation = name;
     },
+  },
+  data: function () {
+    return {
+      manifestations: null,
+      selectedManifestation: null,
+    };
+  },
+  mounted: function () {
+    if (this.manifestations == null) {
+      axios
+        .get("/TicketsSale/rest/manifestations")
+        .then((response) => {
+          this.manifestations = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   },
   template: ` 
   <main >
@@ -20,14 +37,9 @@ Vue.component("home", {
     <div class="album py-5 bg-light">
       <div class="container">
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-          <card @displayCard="displayCard" name="Sasa Matic" location="Spens Novi Sad" date="30.01.2021" image="https://www.novosti.rs/upload/images/2020/04/15n/sasa-matic-tciric.jpg"></card>
-          <card></card>
-          <card></card>
-          <card></card>
-          <card></card>
-          <card></card>
+        <div v-for="item in manifestations" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        
+          <card @displayCard="displayCard" :name="item.name" :location="item.location.address" :date="item.date" :image="item.url"></card>
           
         </div>
       </div>

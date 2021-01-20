@@ -4,9 +4,9 @@ public class Location {
 	
 	private double longitude;
 	private double latitude;
-	private Address address;
+	private String address;
 	
-	public Location(double longitude, double latitude, Address address) {
+	public Location(double longitude, double latitude, String address) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -29,11 +29,11 @@ public class Location {
 		this.latitude = latitude;
 	}
 
-	public Address getAddress() {
+	public String getAddress() {
 		return address;
 	}
 
-	public void setAddress(Address address) {
+	public void setAddress(String address) {
 		this.address = address;
 	}	
 }
