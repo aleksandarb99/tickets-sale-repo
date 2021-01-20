@@ -1,0 +1,3 @@
+#Pomocni id;Geog. duzina;Geog. sirina;Adresa(Ulica i broj,Mesto/Grad,Postanski Broj)
+1;20.457273;44.787197;Street 1,Belgrade,11000
+2;23.727539;37.983810;Street 2,Athens,104031
