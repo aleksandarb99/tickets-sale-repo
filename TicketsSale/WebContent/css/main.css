@@ -31,3 +31,12 @@ a:active {
     font-size: 3.5rem;
   }
 }
+
+.del-margins {
+  margin: 0%;
+  outline: none;
+}
+
+.wrapper {
+  padding: 1em;
+}
