@@ -75,5 +75,10 @@ public class ManifestationDAO {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "ManifestationDAO [manifestations=" + manifestations + "]";
+	}
 	
 }

@@ -18,7 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-
+import model.Customer;
 import model.Manifestation;
 import model.QueryParams;
 import dao.LocationDAO;
@@ -152,15 +152,15 @@ public class ManifestationService {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Student getStudents(Student student) {
+	public Customer getStudents(Customer customer) {
 		StudentDAO dao = (StudentDAO) ctx.getAttribute("StudentDAO");
 		if(dao.find(student.getBrojIndexa()) != null) {
 			return null;
 		}
 		return dao.addStudent(student);
-	}
+	}*/
 	
-    @GET
+    /*@GET
     @Path("/sortiraj")
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Student> getSortiranePacijente(@QueryParam("sorter")String sorter) {

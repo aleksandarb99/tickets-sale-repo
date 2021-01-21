@@ -1,0 +1,3 @@
+asdfghjklp;Antivirus;1000;Zika Zikic;RESERVED;REGULAR
+asdjghjklp;Antivirus;1000;Zika Zikic;RESERVED;REGULAR
+asdjghjLlp;ARA MALIKIAN;1300;Aleksandar Buljevic;RESERVED;VIP

@@ -1,0 +1,5 @@
+mika;mika;Mika;Mikic;MALE;30.01.1977.;ADMIN
+zika;zika;Zika;Zikic;MALE;27.02.1988.;CUSTOMER;asdfghjklp,asdjghjklp;30;BRONZE;10;500
+milka;milka;Milka;Milic;FEMALE;14.03.1990.;SELLER
+jovansx;jovansx;Jovan;Simic;MALE;30.01.1999.;CUSTOMER;NO_TICKET;300;SILVER;40;500
+aca;aca;Aleksandar;Buljevic;MALE;15.10.1999.;CUSTOMER;asdjghjLlp;510;GOLD;70;500
