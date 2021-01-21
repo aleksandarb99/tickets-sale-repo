@@ -3,6 +3,8 @@ package model;
 import java.util.Date;
 
 public class Administrator extends User {
+	
+	public Administrator() {}
 
 	public Administrator(String username, String password, String name, String lastName, Gender gender,
 			Date dateOfBirth) {

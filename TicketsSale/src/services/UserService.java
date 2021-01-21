@@ -1,6 +1,7 @@
 package services;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -9,66 +10,78 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import model.Customer;
-import model.Manifestation;
+import model.Ticket;
+import model.TypeOfCustomer;
+import model.TypesOfCustomers;
+import model.User;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
+import dao.TicketDAO;
+import dao.UserDAO;
 
-@Path("/manifestations")
-public class ManifestationService {
+@Path("/users")
+public class UserService {
 
 	@Context
 	ServletContext ctx;
-	LocationDAO locationDAO;
 	
-	public ManifestationService() {
+	public UserService() {
 	}
 	
 	@PostConstruct
 	public void init() {
+		LocationDAO locationDAO = null;
+		TicketDAO ticketDAO = null;
+		ManifestationDAO manifestationDAO = null;
 		if (ctx.getAttribute("LocationDAO") == null) {
-	    	String contextPath = ctx.getRealPath("");
+	    	String contextPath = ctx.getRealPath("");    	
 	    	locationDAO = new LocationDAO(contextPath);
 			ctx.setAttribute("LocationDAO", locationDAO);
 		}
 		if (ctx.getAttribute("ManifestationDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("ManifestationDAO", new ManifestationDAO(contextPath, locationDAO));
+	    	manifestationDAO = new ManifestationDAO(contextPath, locationDAO);
+			ctx.setAttribute("ManifestationDAO", manifestationDAO);
+		}
+		if (ctx.getAttribute("TicketDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
+			ctx.setAttribute("TicketDAO", ticketDAO);
+		}
+		if (ctx.getAttribute("UserDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("UserDAO", new UserDAO(contextPath, ticketDAO, manifestationDAO));
 		}
 	}
 	
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getManifestations() {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+	public Collection<User> getUsers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		return dao.findAll();
 	}
 	
-	@GET
-	@Path("/{name: .+}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Manifestation getManifestation(@PathParam("name") String name) {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.find(name);
-	}
-	
-	/*@POST
-	@Path("/")
+	@POST
+	@Path("/customer/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Customer getStudents(Customer customer) {
-		StudentDAO dao = (StudentDAO) ctx.getAttribute("StudentDAO");
-		if(dao.find(student.getBrojIndexa()) != null) {
+	public Customer getCustomer(Customer customer) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		if(dao.find(customer.getUsername()) != null) {
 			return null;
 		}
-		return dao.addStudent(student);
-	}*/
+		customer.setTickets(new ArrayList<Ticket>());
+		customer.setType(new TypeOfCustomer(TypesOfCustomers.BRONZE, 0, 500));
+		Customer addedCustomer = (Customer)dao.addUser(customer);
+		dao.saveData(ctx.getRealPath(""));
+		return addedCustomer;
+	}
 	
     /*@GET
     @Path("/sortiraj")

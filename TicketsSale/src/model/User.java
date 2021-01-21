@@ -10,6 +10,8 @@ public abstract class User {
 	private Gender gender;
 	private Date dateOfBirth;
 	
+	public User() {}
+	
 	public User(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth) {
 		super();
 		this.username = username;
