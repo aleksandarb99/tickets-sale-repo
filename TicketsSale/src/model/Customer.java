@@ -9,6 +9,8 @@ public class Customer extends User {
 	private double collectedPoints;
 	private TypeOfCustomer type;
 	
+	public Customer() {}
+	
 	public Customer(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth,
 			 double collectedPoints, TypeOfCustomer type) {
 		super(username, password, name, lastName, gender, dateOfBirth);
