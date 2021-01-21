@@ -194,9 +194,9 @@ Vue.component("home", {
     <div class="album py-5 bg-light">
       <div class="container">
 
-        <div v-for="item in manifestations" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         
-          <card @displayCard="displayCard" :name="item.name" :location="item.location.address" :date="item.date" :image="item.url"></card>
+          <card v-for="item in manifestations" @displayCard="displayCard" :name="item.name" :location="item.location.address" :date="item.date" :image="item.url"></card>
           
         </div>
 

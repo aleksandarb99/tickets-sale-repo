@@ -6,7 +6,7 @@ Vue.component("register", {
   },
   template: `
   <div id="login-form" class="container"> 
-    <form v-on:submit.prevent="checkData">
+    <form class="form-reg-log" v-on:submit.prevent="checkData">
       <h1 class="h3 mb-3 fw-normal">Please register</h1>
       <label for="inputUsername" class="visually-hidden">Username</label>
       <input v-model="user.username" type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
