@@ -1,10 +1,92 @@
 Vue.component("home", {
   methods: {
+    updateView: function () {
+      this.sortedFilteredManifestations = this.filterState(
+        this.filterType(this.sort(this.manifestations))
+      );
+    },
+    filterState: function (data) {
+      let tmp;
+      if (this.status == "1") {
+        tmp = data;
+      }
+      if (this.status == "2") {
+        tmp = data.filter((m) => m.numberOfSeats > 0);
+      }
+      if (this.status == "3") {
+        tmp = data.filter((m) => m.numberOfSeats == 0);
+      }
+      if (tmp == undefined) {
+        tmp = [];
+      }
+      return tmp;
+    },
+    filterType: function (data) {
+      let tmp;
+      if (this.type == "1") {
+        tmp = data;
+      }
+      if (this.type == "2") {
+        tmp = data.filter((m) => m.type == "CONCERT");
+      }
+      if (this.type == "3") {
+        tmp = data.filter((m) => m.type == "FESTIVAL");
+      }
+      if (this.type == "4") {
+        tmp = data.filter((m) => m.type == "THEATER");
+      }
+      if (this.type == "5") {
+        tmp = data.filter((m) => m.type == "OTHERS");
+      }
+      if (tmp == undefined) {
+        tmp = [];
+      }
+      return tmp;
+    },
+    sort: function (data) {
+      if (this.sorter == "1") {
+        return data.sort((a, b) => (a.name > b.name ? 1 : -1));
+      }
+      if (this.sorter == "2") {
+        return data.sort((a, b) => (a.name < b.name ? 1 : -1));
+      }
+
+      if (this.sorter == "3") {
+        return data.sort((a, b) => (a.date > b.date ? 1 : -1));
+      }
+      if (this.sorter == "4") {
+        return data.sort((a, b) => (a.date < b.date ? 1 : -1));
+      }
+
+      if (this.sorter == "5") {
+        return data.sort((a, b) =>
+          a.priceOfRegularTicket > b.priceOfRegularTicket ? 1 : -1
+        );
+      }
+      // cini mi se da ne radi
+      if (this.sorter == "6") {
+        return data.sort((a, b) =>
+          a.priceOfRegularTicket < b.priceOfRegularTicket ? 1 : -1
+        );
+      }
+
+      if (this.sorter == "7") {
+        return data.sort((a, b) =>
+          a.location.address > b.location.address ? 1 : -1
+        );
+      }
+      if (this.sorter == "8") {
+        return data.sort((a, b) =>
+          a.location.address < b.location.address ? 1 : -1
+        );
+      }
+    },
     search: function () {
       axios
         .post("/TicketsSale/rest/manifestations", this.queryParams)
         .then((response) => {
           this.manifestations = response.data;
+          this.updateView();
         })
         .catch((err) => {
           console.log(err);
@@ -19,6 +101,7 @@ Vue.component("home", {
         queryParams: this.queryParams,
         manifestations: this.manifestations,
         selectedManifestation: this.selectedManifestation,
+        sortedFilteredManifestations: this.sortedFilteredManifestations,
       };
       sessionStorage.setItem("backupData", JSON.stringify(backupData));
     },
@@ -36,12 +119,14 @@ Vue.component("home", {
       this.queryParams.priceUntil = "";
       this.queryParams.dateFrom = "";
       this.queryParams.dateUntil = "";
+      this.sortedFilteredManifestations = null;
 
       this.search();
     },
   },
   data: function () {
     return {
+      sortedFilteredManifestations: null,
       manifestations: null,
       selectedManifestation: null,
       sorter: "4",
@@ -76,6 +161,7 @@ Vue.component("home", {
         this.type = data.type;
         this.status = data.status;
         this.queryParams = data.queryParams;
+        this.sortedFilteredManifestations = data.sortedFilteredManifestations;
       }
     }
 
@@ -149,7 +235,7 @@ Vue.component("home", {
 
             <div class="input-group input-group-sm mb-3">
               <span class="input-group-text" id="inputGroup-sizing-sm">Sorter</span>
-              <select v-model="sorter" id="inputSort" class="form-control form-select" aria-label="Sorter" aria-describedby="inputGroup-sizing-lg">
+              <select @change="updateView" v-model="sorter" id="inputSort" class="form-control form-select" aria-label="Sorter" aria-describedby="inputGroup-sizing-lg">
                 <option value="1">By Name Ascending</option>
                 <option value="2">By Name Descending</option>
                 <option value="3">By Date Ascending</option>
@@ -165,7 +251,7 @@ Vue.component("home", {
           <div class="col-md-3">
             <div class="input-group input-group-sm mb-3">
               <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
-              <select v-model="type" id="inputType" class="form-control form-select" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
+              <select @change="updateView" v-model="type" id="inputType" class="form-control form-select" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
                 <option selected value="1">All</option>
                 <option value="2">Concert</option>
                 <option value="3">Festival</option>
@@ -178,7 +264,7 @@ Vue.component("home", {
           <div class="col-md-3">
             <div class="input-group input-group-sm mb-3">
               <span class="input-group-text" id="inputGroup-sizing-sm">Status</span>
-              <select v-model="status" id="inputStatus" class="form-control form-select" aria-label="Status" aria-describedby="inputGroup-sizing-lg">
+              <select @change="updateView" v-model="status" id="inputStatus" class="form-control form-select" aria-label="Status" aria-describedby="inputGroup-sizing-lg">
                 <option selected value="1">All</option>
                 <option value="2">Unsold</option>
                 <option value="3">Sold Out</option>
@@ -196,11 +282,11 @@ Vue.component("home", {
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         
-          <card v-for="item in manifestations" @displayCard="displayCard" :name="item.name" :location="item.location.address" :date="item.date" :image="item.url"></card>
+          <card v-for="item in sortedFilteredManifestations" @displayCard="displayCard" :name="item.name" :location="item.location.address" :date="item.date" :image="item.url"></card>
           
         </div>
 
-        <div v-if="manifestations!=null && manifestations.length == 0" class="alert alert-dark" role="alert">
+        <div v-if="sortedFilteredManifestations!=null && sortedFilteredManifestations.length == 0" class="alert alert-dark" role="alert">
           Manifestation which meets these parameters does not exist
         </div>
 
