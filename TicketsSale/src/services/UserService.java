@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -82,6 +83,27 @@ public class UserService {
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;
 	}
+	
+	@POST
+	@Path("/logIn/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
+	public User getUser(@Context HttpServletRequest request, String data) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		String[] params = data.split("\\?");
+		User loggedUser = dao.find(params[0]);
+		if(loggedUser == null) return null;
+		if(!loggedUser.getPassword().equals(params[1])) return null;
+		request.getSession().setAttribute("user", loggedUser);
+		return loggedUser;
+	}
+	
+	@GET
+	@Path("/logout/")
+	public void logout(@Context HttpServletRequest request) {
+		request.getSession().setAttribute("user", null);
+	}
+
 	
     /*@GET
     @Path("/sortiraj")

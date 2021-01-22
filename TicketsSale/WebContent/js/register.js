@@ -2,7 +2,18 @@ Vue.component("register", {
   data: function () {
     return {
       user: {},
+      activeUser: false,
     };
+  },
+  mounted: function () {
+    if (sessionStorage.getItem("user") == null) {
+      this.activeUser = false;
+    } else {
+      this.activeUser = true;
+    }
+    if (this.activeUser) {
+      window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
+    }
   },
   template: `
   <div id="login-form" class="container"> 
