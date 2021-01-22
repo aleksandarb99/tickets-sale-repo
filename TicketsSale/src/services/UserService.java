@@ -43,12 +43,17 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");    	
 	    	locationDAO = new LocationDAO(contextPath);
 			ctx.setAttribute("LocationDAO", locationDAO);
+		} else {
+			locationDAO = (LocationDAO) ctx.getAttribute("LocationDAO");
 		}
 		if (ctx.getAttribute("ManifestationDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 	    	manifestationDAO = new ManifestationDAO(contextPath, locationDAO);
 			ctx.setAttribute("ManifestationDAO", manifestationDAO);
+		} else {
+			manifestationDAO = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		}
+		System.out.println(manifestationDAO);
 		if (ctx.getAttribute("TicketDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
