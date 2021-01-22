@@ -175,105 +175,102 @@ Vue.component("home", {
           <p class="lead text-muted">“Without music life would be a mistake. ” - Friedrich Nietzsche</p>
         </div>
       </div>
+    </section>
 
-      <form action="" @submit.prevent="search">
-        <div class="container bg-dark wrapper">
-          <div class="row">
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
-                <input v-model="queryParams.name" class="del-margins" type="text" name="name" id="name" placeholder="Name" />
+    <form action="" @submit.prevent="search">
+      <div class="container-fluid bg-dark">
+        <div class="container has-row ">
+          <div class="row form-row">
+            <div class="col-md-12 col-sm-12">
+              <h3 style="color:white">CHOOSE PARAMETERS</h3>
+            </div>
+            <div class="col-md-2 col-sm-12 del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input v-model="queryParams.name" class="del-margins spread-it" type="text" name="name" id="name" placeholder="Name" />
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Location</span>
-                <input v-model="queryParams.location" class="del-margins" type="text" name="location" id="location" placeholder="Location" />
+            <div class="col-md-2 col-sm-12 del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input v-model="queryParams.location" class="del-margins spread-it" type="text" name="location" id="location" placeholder="Location" />
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Price Min</span> 
-                <input v-model="queryParams.priceFrom" class="del-margins" type="number" name="priceFrom" id="priceFrom" placeholder="Minimum" />
+            <div class="col-md-1 col-sm-6 del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input v-model="queryParams.priceFrom" class="del-margins spread-it" type="number" name="priceFrom" id="priceFrom" placeholder="Minimum" />
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Price Max</span>
-                <input v-model="queryParams.priceUntil" class="del-margins" type="number" name="priceUntil" id="priceUntil" placeholder="Maximum" />
+            <div class="col-md-1 col-sm-6 del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input v-model="queryParams.priceUntil" class="del-margins spread-it" type="number" name="priceUntil" id="priceUntil" placeholder="Maximum" />
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Date From</span>
-                <input v-model="queryParams.dateFrom" class="del-margins" type="date" name="dateFrom" id="dateFrom" placeholder="From" />
+            <div class="col-md-2 col-sm-12 del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input  v-model="queryParams.dateFrom" class="spread-it" type="date" name="dateFrom" data-placeholder="From" />
               </div> 
             </div>
-            <div class="col-md-3">
-              <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Date Until</span>
-                <input v-model="queryParams.dateUntil" class="del-margins" type="date" name="dateUnti" id="dateUnti" placeholder="Until" />
+            <div class="col-md-2 col-sm-12  del-padding spread-it">
+              <div class="input-group input-group-sm mb-3 spread-it">
+                <input  v-model="queryParams.dateUntil" class="spread-it" type="date" name="dateUnti" data-placeholder="Until" />
               </div>
             </div>
-            <div class="col-md-3">
-              <button @click="reset" type="button" class="del-margins btn btn-secondary">Reset</button>
+            <div class="col-md-1 col-sm-6  del-padding spread-it">
+              <button style="width: 100%" @click="reset" type="button btn-md" class="del-margins btn btn-secondary spread-it">Reset</button>
             </div>
-            <div class="col-md-3">
-              <input class="del-margins btn btn-primary btn-lg" type="submit" name="search">Search</input>
-            </div>
-          </div>
-        </div>
-      </form> 
-      <hr/>
-
-      <div class="container">
-        <div class="row">
-          <div class="col-md-3">
-
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Sorter</span>
-              <select @change="updateView" v-model="sorter" id="inputSort" class="form-control form-select" aria-label="Sorter" aria-describedby="inputGroup-sizing-lg">
-                <option value="1">By Name Ascending</option>
-                <option value="2">By Name Descending</option>
-                <option value="3">By Date Ascending</option>
-                <option selected value="4">By Date Descending</option>
-                <option value="5">By Price Ascending</option>
-                <option value="6">By Price Descending</option>
-                <option value="7">By Location Ascending</option>
-                <option value="8">By Location Descending</option>
-              </select>
+            <div class="col-md-1 col-sm-6  del-padding spread-it">
+              <input style="width: 100%"class="del-margins btn btn-primary btn-md spread-it" type="submit" name="submit"></input>
             </div>
           </div>
-
-          <div class="col-md-3">
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
-              <select @change="updateView" v-model="type" id="inputType" class="form-control form-select" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
-                <option selected value="1">All</option>
-                <option value="2">Concert</option>
-                <option value="3">Festival</option>
-                <option value="4">Theatrical Play</option>
-                <option value="5">Others</option>
-              </select>
-            </div>      
-          </div>
-
-          <div class="col-md-3">
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Status</span>
-              <select @change="updateView" v-model="status" id="inputStatus" class="form-control form-select" aria-label="Status" aria-describedby="inputGroup-sizing-lg">
-                <option selected value="1">All</option>
-                <option value="2">Unsold</option>
-                <option value="3">Sold Out</option>
-              </select>
-            </div>      
-          </div>
-
         </div>
       </div>
-    </section>
+    </form> 
+    <hr/>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Sorter</span>
+            <select @change="updateView" v-model="sorter" id="inputSort" class="form-control form-select" aria-label="Sorter" aria-describedby="inputGroup-sizing-lg">
+              <option value="1">By Name Ascending</option>
+              <option value="2">By Name Descending</option>
+              <option value="3">By Date Ascending</option>
+              <option selected value="4">By Date Descending</option>
+              <option value="5">By Price Ascending</option>
+              <option value="6">By Price Descending</option>
+              <option value="7">By Location Ascending</option>
+              <option value="8">By Location Descending</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
+            <select @change="updateView" v-model="type" id="inputType" class="form-control form-select" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
+              <option selected value="1">All</option>
+              <option value="2">Concert</option>
+              <option value="3">Festival</option>
+              <option value="4">Theatrical Play</option>
+              <option value="5">Others</option>
+            </select>
+          </div>      
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Status</span>
+            <select @change="updateView" v-model="status" id="inputStatus" class="form-control form-select" aria-label="Status" aria-describedby="inputGroup-sizing-lg">
+              <option selected value="1">All</option>
+              <option value="2">Unsold</option>
+              <option value="3">Sold Out</option>
+            </select>
+          </div>      
+        </div>
+
+      </div>
+    </div>
     <hr/>
 
     <div class="album py-5 bg-light">

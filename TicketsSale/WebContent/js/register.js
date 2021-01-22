@@ -1,7 +1,7 @@
 Vue.component("register", {
   data: function () {
     return {
-      user: {},
+      user: { gender: "CHOOSE" },
       activeUser: false,
     };
   },
@@ -27,19 +27,29 @@ Vue.component("register", {
       <input v-model="user.name" type="text" id="inputName" class="form-control" placeholder="Name" required>
       <label for="inputSurname" class="visually-hidden">Surname</label>
       <input v-model="user.lastName" type="text" id="inputSurname" class="form-control" placeholder="Surname" required>
+
       <select v-model="user.gender" id="inputGender" class="form-control form-select" aria-label="Gender">
-        <option selected>Open this select menu</option>
+        <option selected value="CHOOSE">Open this select menu</option>
         <option value="MALE">Male</option>
         <option value="FEMALE">Female</option>
       </select>
-      <input v-model="user.dateOfBirth" type="date" class="form-control" id="inputDate" required>
+
+      <input v-model="user.dateOfBirth" class="form-control" type="date" name="inputDate" data-placeholder="   Date of birth" required aria-required="true" />
+
       <hr>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
     </form>
+    <div v-if="user.gender == 'CHOOSE'" class="alert alert-info" role="alert">
+      U must choose another gender!
+    </div>
   </div>
     `,
   methods: {
     checkData: function () {
+      if (this.user.gender == "CHOOSE") {
+        return;
+      }
+
       let parts = this.user.dateOfBirth.split("-");
       this.user.dateOfBirth = new Date(
         parts[0],
