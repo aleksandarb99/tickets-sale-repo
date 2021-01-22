@@ -32,11 +32,74 @@ a:active {
   }
 }
 
+.spread-it {
+  height: 100%;
+  margin: 0;
+}
+
+.has-row {
+  height: 15vh;
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+}
+
+.del-padding {
+  padding: 0;
+}
+
 .del-margins {
-  margin: 0%;
+  margin: 0;
+  padding: 0;
   outline: none;
+  width: inherit;
+}
+
+.form-row {
+  height: 4vh;
 }
 
 .wrapper {
   padding: 1em;
+}
+
+/* zumiranje carte */
+.zoom {
+  transition: transform 0.2s; /* Animation */
+}
+
+.zoom:hover {
+  transform: scale(1.1);
+}
+
+input[type="date"]::before {
+  padding: 0;
+  content: attr(data-placeholder);
+  width: 100%;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+  padding: 0;
+  display: none;
+}
+
+input[type="date"] {
+  width: 100%;
+  padding: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .has-row {
+    height: 35vh;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .has-row {
+    height: 40vh;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
+  }
 }

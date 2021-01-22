@@ -16,6 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import model.Customer;
+import model.Manifestation;
+import model.Seller;
 import model.Ticket;
 import model.TypeOfCustomer;
 import model.TypesOfCustomers;
@@ -76,7 +78,7 @@ public class UserService {
 	@Path("/customer/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Customer getCustomer(Customer customer) {
+	public Customer addCustomer(Customer customer) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		if(dao.find(customer.getUsername()) != null) {
 			return null;
@@ -110,6 +112,20 @@ public class UserService {
 		}
 		
 		return null;
+  }
+  
+	@Path("/seller/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Seller addSeller(Seller seller) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		if(dao.find(seller.getUsername()) != null) {
+			return null;
+		}
+		seller.setManifestations(new ArrayList<Manifestation>());
+		Seller addedCustomer = (Seller)dao.addUser(seller);
+		dao.saveData(ctx.getRealPath(""));
+		return addedCustomer;
 	}
 	
 	@POST
