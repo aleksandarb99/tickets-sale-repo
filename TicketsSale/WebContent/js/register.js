@@ -2,11 +2,22 @@ Vue.component("register", {
   data: function () {
     return {
       user: {},
+      activeUser: false,
     };
+  },
+  mounted: function () {
+    if (sessionStorage.getItem("user") == null) {
+      this.activeUser = false;
+    } else {
+      this.activeUser = true;
+    }
+    if (this.activeUser) {
+      window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
+    }
   },
   template: `
   <div id="login-form" class="container"> 
-    <form v-on:submit.prevent="checkData">
+    <form class="form-reg-log" v-on:submit.prevent="checkData">
       <h1 class="h3 mb-3 fw-normal">Please register</h1>
       <label for="inputUsername" class="visually-hidden">Username</label>
       <input v-model="user.username" type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
