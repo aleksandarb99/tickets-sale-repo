@@ -7,7 +7,7 @@ Vue.component("login", {
     };
   },
   mounted: function () {
-    if (sessionStorage.getItem("user") == null) {
+    if (localStorage.getItem("user") == null) {
       this.activeUser = false;
     } else {
       this.activeUser = true;
@@ -45,7 +45,7 @@ Vue.component("login", {
             this.password = null;
             return;
           }
-          sessionStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
           this.username = null;
           this.password = null;
           window.location.href =

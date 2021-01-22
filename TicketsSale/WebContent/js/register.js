@@ -6,7 +6,7 @@ Vue.component("register", {
     };
   },
   mounted: function () {
-    if (sessionStorage.getItem("user") == null) {
+    if (localStorage.getItem("user") == null) {
       this.activeUser = false;
     } else {
       this.activeUser = true;

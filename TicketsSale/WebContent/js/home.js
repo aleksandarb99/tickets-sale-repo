@@ -103,10 +103,10 @@ Vue.component("home", {
         selectedManifestation: this.selectedManifestation,
         sortedFilteredManifestations: this.sortedFilteredManifestations,
       };
-      sessionStorage.setItem("backupData", JSON.stringify(backupData));
+      localStorage.setItem("backupData", JSON.stringify(backupData));
     },
     reset: function () {
-      sessionStorage.clear();
+      localStorage.removeItem("backupData");
 
       this.manifestations = null;
       this.selectedManifestation = null;
@@ -143,15 +143,14 @@ Vue.component("home", {
     };
   },
   mounted: function () {
-    if (sessionStorage.getItem("backupData") != null) {
+    if (localStorage.getItem("backupData") != null) {
       let data;
       let flag = true;
       try {
-        //test
-        data = JSON.parse(sessionStorage.getItem("backupData"));
+        data = JSON.parse(localStorage.getItem("backupData"));
         data.manifestations;
       } catch (error) {
-        sessionStorage.clear();
+        localStorage.removeItem("backupData");
         flag = false;
       }
       if (flag) {

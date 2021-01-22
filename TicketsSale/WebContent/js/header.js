@@ -9,13 +9,13 @@ Vue.component("our-header", {
       event.preventDefault();
       axios.get("/TicketsSale/rest/users/logout").then((response) => {
         this.activeUser = false;
-        sessionStorage.removeItem("user");
+        localStorage.removeItem("user");
         window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       });
     },
   },
   mounted: function () {
-    if (sessionStorage.getItem("user") == null) {
+    if (localStorage.getItem("user") == null) {
       this.activeUser = false;
     } else {
       this.activeUser = true;
