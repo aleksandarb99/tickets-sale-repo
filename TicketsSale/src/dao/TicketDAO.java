@@ -40,7 +40,8 @@ public class TicketDAO {
 	private void loadData(String contextPath, ManifestationDAO dao) {
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/data/tickets.txt");
+			String separator = System.getProperty("file.separator");
+			File file = new File(contextPath + "data" +separator+ "tickets.txt");
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			StringTokenizer st;

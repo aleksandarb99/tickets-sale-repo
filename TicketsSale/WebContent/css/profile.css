@@ -1,0 +1,26 @@
+.form-profile {
+  width: 30vw;
+  margin: auto;
+}
+
+.input-profile,
+.paragraph-profile {
+  margin-top: 1rem;
+}
+
+.set-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-image-set {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.date-disabled {
+  background-color: #e9ecef;
+}

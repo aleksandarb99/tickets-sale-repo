@@ -42,7 +42,8 @@ public class ManifestationDAO {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/data/manifestations.txt");
+			String separator = System.getProperty("file.separator");
+			File file = new File(contextPath + "data" +separator+ "manifestations.txt");
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			StringTokenizer st;

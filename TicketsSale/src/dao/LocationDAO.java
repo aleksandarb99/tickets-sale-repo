@@ -38,7 +38,8 @@ public class LocationDAO {
 	private void loadData(String contextPath) {
 		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "/data/locations.txt");
+			String separator = System.getProperty("file.separator");
+			File file = new File(contextPath + "data" +separator+ "locations.txt");
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			StringTokenizer st;
