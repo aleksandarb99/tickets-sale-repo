@@ -55,7 +55,6 @@ public class UserService {
 		} else {
 			manifestationDAO = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		}
-		System.out.println(manifestationDAO);
 		if (ctx.getAttribute("TicketDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
@@ -92,6 +91,29 @@ public class UserService {
 	}
 	
 	@POST
+	@Path("/updateUser/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public User updateUser(@Context HttpServletRequest request, Customer user) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
+		User loggedUser = (User)request.getSession().getAttribute("user");
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		if(dao.find(user.getUsername()) != null && user.getUsername().equals(loggedUser.getUsername())) {
+			User retUser = dao.updateUser(loggedUser.getUsername(), user);
+			dao.saveData(ctx.getRealPath(""));
+			return retUser;
+		}
+		if(dao.find(user.getUsername()) == null) {
+			User retUser = dao.updateUser(loggedUser.getUsername(), user);
+			dao.saveData(ctx.getRealPath(""));
+			return retUser;
+		}
+		
+		return null;
+  }
+  
 	@Path("/seller/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
