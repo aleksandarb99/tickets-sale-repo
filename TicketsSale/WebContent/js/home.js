@@ -151,12 +151,10 @@ Vue.component("home", {
       .get("/TicketsSale/rest/manifestations/recent/")
       .then((response) => {
         this.recent = response.data;
-        console.log(this.recent);
       })
       .catch((err) => {
         console.log(err);
       });
-    console.log(this.recent);
 
     if (localStorage.getItem("backupData") != null) {
       let data;

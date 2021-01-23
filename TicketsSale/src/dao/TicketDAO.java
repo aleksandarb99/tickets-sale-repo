@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import model.Manifestation;
 import model.Ticket;
@@ -30,6 +31,12 @@ public class TicketDAO {
 	
 	public Collection<Ticket> findAll() {
 		return tickets.values();
+	}
+	
+	public Collection<Ticket> findTickets(Manifestation manifestation) {
+		Collection<Ticket> collection = tickets.values().stream()
+				.filter(t -> t.getReservedManifestation().getName().equals(manifestation.getName())).collect(Collectors.toList());
+		return collection;
 	}
 	
 	public Ticket addTicket(Ticket ticket) {

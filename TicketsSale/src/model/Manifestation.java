@@ -12,6 +12,8 @@ public class Manifestation {
 	private Location location;
 	private String url;
 	
+	public Manifestation() {}
+	
 	public Manifestation(String name, TypeOfManifestation type, int numberOfSeats, Date date,
 			double priceOfRegularTicket, ManifestationState state, Location location, String url) {
 		super();

@@ -3,7 +3,6 @@ package dao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -66,7 +65,7 @@ public class UserDAO {
 		BufferedReader in = null;
 		try {
 			String separator = System.getProperty("file.separator");
-			File file = new File(contextPath + "data" +separator+ "usersInfo.txt");
+			File file = new File(contextPath + "data" +separator+ "users.txt");
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			StringTokenizer st;
@@ -90,9 +89,19 @@ public class UserDAO {
 						continue;
 					}
 					if(typeOfUser.equals("SELLER")) {
-						ArrayList<Manifestation> manifestations = new ArrayList<>(manDao.findAll());
+						String manifestations = st.nextToken().trim();
+						List<Manifestation> sellerManifestations = new ArrayList<Manifestation>();
+						if(!manifestations.equals("NO_MANIFESTATIONS") && !manifestations.contains(",")) {
+							sellerManifestations.add(manDao.find(manifestations));
+						}
+						else if(!manifestations.equals("NO_MANIFESTATIONS") && manifestations.contains(",")) {
+							String[] params = manifestations.split(",");
+							for(String param: params) {
+								sellerManifestations.add(manDao.find(param));
+							}
+						}
 						Seller seller = new Seller(username, password, name, lastName, gender, date);
-						seller.setManifestations(manifestations);
+						seller.setManifestations(sellerManifestations);
 						users.put(username, seller);
 						continue;
 					}
@@ -146,6 +155,18 @@ public class UserDAO {
 				builder.append("ADMIN");
 			}else if(user instanceof Seller) {
 				builder.append("SELLER");
+				Seller seller = (Seller) user;
+				if(seller.getManifestations().size() == 0) {
+					builder.append("NO_MANIFESTATIONS;");
+				}else {
+					int counter = 1;
+					for(Manifestation manifestation : seller.getManifestations()) {
+						builder.append(manifestation.getName());
+						if(seller.getManifestations().size() != counter++) {
+							builder.append(",");
+						}
+					}
+				}
 			}else {
 				builder.append("CUSTOMER;");
 				Customer customer = (Customer) user;
@@ -172,7 +193,7 @@ public class UserDAO {
 		}
 		try {
 			String separator = System.getProperty("file.separator");
-			File file = new File(contextPath + "data" +separator+ "usersInfo.txt");
+			File file = new File(contextPath + "data" +separator+ "users.txt");
 			PrintWriter myWriter = new PrintWriter(file);
 			myWriter.write(builder.toString());
 			myWriter.close();

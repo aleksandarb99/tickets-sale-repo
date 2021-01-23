@@ -28,18 +28,21 @@ public class ManifestationService {
 	
 	@Context
 	ServletContext ctx;
-	LocationDAO locationDAO;
 	
 	public ManifestationService() {
 	}
 	
 	@PostConstruct
 	public void init() {
+		LocationDAO locationDAO;
 		if (ctx.getAttribute("LocationDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 	    	locationDAO = new LocationDAO(contextPath);
 			ctx.setAttribute("LocationDAO", locationDAO);
+		} else {
+			locationDAO = (LocationDAO) ctx.getAttribute("LocationDAO");
 		}
+		
 		if (ctx.getAttribute("ManifestationDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("ManifestationDAO", new ManifestationDAO(contextPath, locationDAO));
