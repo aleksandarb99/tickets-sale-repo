@@ -18,7 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import model.Customer;
 import model.Manifestation;
 import model.QueryParams;
 import dao.LocationDAO;
