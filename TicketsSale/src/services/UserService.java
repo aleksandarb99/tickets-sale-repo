@@ -15,6 +15,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import model.Seller;
+import model.Manifestation;
 import model.Customer;
 import model.Ticket;
 import model.TypeOfCustomer;
@@ -112,8 +114,7 @@ public class UserService {
 		return null;
 	}
 		
-		
-	/*@Path("/seller/")
+	@Path("/seller/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Seller addSeller(Seller seller) {
@@ -125,7 +126,8 @@ public class UserService {
 		Seller addedCustomer = (Seller)dao.addUser(seller);
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;
-	}*/
+	}
+	
 	
 	@POST
 	@Path("/logIn/")
