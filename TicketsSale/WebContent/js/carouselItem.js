@@ -13,6 +13,9 @@ Vue.component("carouselItem", {
   },
   created: function () {
     global.counter++;
+    if (global.counter == 3) {
+      global.counter = 0;
+    }
   },
   template: ` 
         <div v-bind:class="[isActive == 0 ? 'active' : '', 'carousel-item']">

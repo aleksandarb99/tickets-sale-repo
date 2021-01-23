@@ -5,15 +5,13 @@ Vue.component("addSeller", {
     };
   },
   mounted: function () {
-    let a = localStorage.getItem("user");
-    if (a == null) {
+    let loggedUser = localStorage.getItem("user");
+    if (loggedUser == null) {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }
-    let user = JSON.parse(a);
-    if (Object.keys(user).length == 6) {
-      //ako je admin
-    } else {
+    if (Object.keys(JSON.parse(loggedUser)).length != 6) {
+      //ako nije admin, ova provera verovatno ni ne treba jer se u headeru proverava da li je admin -> pa se dodaje dugme, kako bi se doslo do ovde uopste
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
     }
   },

@@ -71,7 +71,7 @@ Vue.component("register", {
           alert(
             "Uspesno ste se registrovali kao korisnik: " + this.user.username
           );
-          this.user = {};
+          this.user = { gender: "CHOOSE" };
           window.location.href =
             "http://127.0.0.1:9001/TicketsSale/index.html#/";
         })

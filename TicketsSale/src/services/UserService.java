@@ -16,6 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import model.Customer;
+import model.Manifestation;
+import model.Seller;
 import model.Ticket;
 import model.TypeOfCustomer;
 import model.TypesOfCustomers;
@@ -76,7 +78,10 @@ public class UserService {
 	@Path("/customer/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Customer addCustomer(Customer customer) {
+	public Customer addCustomer(@Context HttpServletRequest request, Customer customer) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		if(dao.find(customer.getUsername()) != null) {
 			return null;
@@ -86,6 +91,24 @@ public class UserService {
 		Customer addedCustomer = (Customer)dao.addUser(customer);
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;
+	}
+	
+	@POST
+	@Path("/seller/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Seller addSeller(@Context HttpServletRequest request, Seller seller) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		if(dao.find(seller.getUsername()) != null) {
+			return null;
+		}
+		seller.setManifestations(new ArrayList<Manifestation>());
+		Seller addedSeller = (Seller)dao.addUser(seller);
+		dao.saveData(ctx.getRealPath(""));
+		return addedSeller;
 	}
 	
 	@POST
@@ -111,22 +134,6 @@ public class UserService {
 		
 		return null;
 	}
-		
-	/*
-	@Path("/seller/")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Seller addSeller(Seller seller) {
-		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
-		if(dao.find(seller.getUsername()) != null) {
-			return null;
-		}
-		seller.setManifestations(new ArrayList<Manifestation>());
-		Seller addedCustomer = (Seller)dao.addUser(seller);
-		dao.saveData(ctx.getRealPath(""));
-		return addedCustomer;
-	}*/
-	
 	
 	@POST
 	@Path("/logIn/")

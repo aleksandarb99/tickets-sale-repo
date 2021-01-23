@@ -5,27 +5,18 @@ Vue.component("users", {
     };
   },
   mounted: function () {
-    let a = localStorage.getItem("user");
-    if (a == null) {
+    if (localStorage.getItem("user") == null) {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }
-
-    let user = JSON.parse(a);
-    //test zato sto admin ima 6 propertija
-
-    if (Object.keys(user).length == 6) {
-      axios
-        .get("/TicketsSale/rest/users", this.queryParams)
-        .then((response) => {
-          this.users = response.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
-    }
+    axios
+      .get("/TicketsSale/rest/users", this.queryParams)
+      .then((response) => {
+        this.users = response.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   filters: {
     dateFormat: function (value, format) {

@@ -2,6 +2,7 @@ Vue.component("our-header", {
   data: function () {
     return {
       activeUser: false,
+      user: {},
     };
   },
   methods: {
@@ -9,6 +10,7 @@ Vue.component("our-header", {
       event.preventDefault();
       axios.get("/TicketsSale/rest/users/logout").then((response) => {
         this.activeUser = false;
+        this.user = {};
         localStorage.removeItem("user");
         window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       });
@@ -17,8 +19,10 @@ Vue.component("our-header", {
   mounted: function () {
     if (localStorage.getItem("user") == null) {
       this.activeUser = false;
+      this.user = {};
     } else {
       this.activeUser = true;
+      this.user = JSON.parse(localStorage.getItem("user"));
     }
   },
   template: ` 
@@ -34,6 +38,12 @@ Vue.component("our-header", {
         </li>
         <li v-if="activeUser" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/profile">Profile</a>
+        </li>
+        <li v-if="Object.keys(user).length == 6" class="nav-item active">
+          <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/addSeller">Add seller</a>
+        </li>
+        <li v-if="Object.keys(user).length == 6" class="nav-item active">
+          <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/users">Review users</a>
         </li>
       </ul>
       <ul class="nav justify-content-end">
