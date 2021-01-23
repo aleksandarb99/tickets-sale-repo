@@ -52,6 +52,10 @@ public class Manifestation {
 	public Date getDate() {
 		return date;
 	}
+	
+	public long getDateLong() {
+		return date.getTime();
+	}
 
 	public void setDate(Date date) {
 		this.date = date;

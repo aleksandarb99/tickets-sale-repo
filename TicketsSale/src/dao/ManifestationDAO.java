@@ -4,11 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import model.Manifestation;
 import model.ManifestationState;
@@ -31,6 +35,21 @@ public class ManifestationDAO {
 	
 	public Collection<Manifestation> findAll() {
 		return manifestations.values();
+	}
+	
+	public Collection<Manifestation> findRecent() {
+		Collection<Manifestation> all = manifestations.values().stream().sorted(Comparator.comparingLong(Manifestation::getDateLong))
+                .collect(Collectors.toList());
+		
+		List<Manifestation> recent = new ArrayList<Manifestation>();
+		
+		int counter = 0;
+		for (Manifestation manifestation : all) {
+			recent.add(manifestation);
+			if(++counter == 3) break;
+		}
+		
+		return recent;
 	}
 	
 	public Manifestation addManifestation(Manifestation manifestation) {

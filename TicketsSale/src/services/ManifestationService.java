@@ -55,6 +55,14 @@ public class ManifestationService {
 	}
 	
 	@GET
+	@Path("/recent/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getRecentManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findRecent();
+	}
+	
+	@GET
 	@Path("/{name: .+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Manifestation getManifestation(@PathParam("name") String name) {

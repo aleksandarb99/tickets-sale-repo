@@ -1,4 +1,26 @@
+var global = { counter: 0 };
+
 Vue.component("home", {
+  name: "home",
+  data: function () {
+    return {
+      recent: {},
+      sortedFilteredManifestations: null,
+      manifestations: null,
+      selectedManifestation: null,
+      sorter: "4",
+      type: "1",
+      status: "1",
+      queryParams: {
+        name: "",
+        location: "",
+        priceFrom: "",
+        priceUntil: "",
+        dateFrom: "",
+        dateUntil: "",
+      },
+    };
+  },
   methods: {
     updateView: function () {
       this.sortedFilteredManifestations = this.filterState(
@@ -124,25 +146,18 @@ Vue.component("home", {
       this.search();
     },
   },
-  data: function () {
-    return {
-      sortedFilteredManifestations: null,
-      manifestations: null,
-      selectedManifestation: null,
-      sorter: "4",
-      type: "1",
-      status: "1",
-      queryParams: {
-        name: "",
-        location: "",
-        priceFrom: "",
-        priceUntil: "",
-        dateFrom: "",
-        dateUntil: "",
-      },
-    };
-  },
   mounted: function () {
+    axios
+      .get("/TicketsSale/rest/manifestations/recent/")
+      .then((response) => {
+        this.recent = response.data;
+        console.log(this.recent);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log(this.recent);
+
     if (localStorage.getItem("backupData") != null) {
       let data;
       let flag = true;
@@ -168,14 +183,25 @@ Vue.component("home", {
   },
   template: ` 
   <main >
-    <section class="py-5 text-center container">
-      <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-          <h1 class="fw-light">Welcome to Ticket Sales</h1>
-          <p class="lead text-muted">“Without music life would be a mistake. ” - Friedrich Nietzsche</p>
-        </div>
+    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></li>
+        <li data-bs-target="#myCarousel" data-bs-slide-to="1"></li>
+        <li data-bs-target="#myCarousel" data-bs-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <carouselItem v-for="manifest in recent" :title="manifest.name" :date="manifest.date" :image="manifest.url"></carouselItem>
       </div>
-    </section>
+      <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </a>
+    </div>
+
 
     <form action="" @submit.prevent="search">
       <div class="container-fluid bg-dark">
