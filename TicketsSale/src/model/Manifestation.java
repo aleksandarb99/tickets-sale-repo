@@ -91,7 +91,7 @@ public class Manifestation {
 		return url;
 	}
 
-	public void setImage(String url) {
+	public void setUrl(String url) {
 		this.url = url;
 	}
 }

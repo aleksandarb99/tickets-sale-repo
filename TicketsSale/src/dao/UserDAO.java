@@ -154,7 +154,7 @@ public class UserDAO {
 			if(user instanceof Administrator) {
 				builder.append("ADMIN");
 			}else if(user instanceof Seller) {
-				builder.append("SELLER");
+				builder.append("SELLER;");
 				Seller seller = (Seller) user;
 				if(seller.getManifestations().size() == 0) {
 					builder.append("NO_MANIFESTATIONS;");

@@ -3,6 +3,8 @@ package dao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +39,35 @@ public class ManifestationDAO {
 		return manifestations.values();
 	}
 	
+	public boolean checkDateAndLocation(Manifestation manifestation) {
+		
+		if(manifestation.getDate().before(new Date())) return false;
+		
+		for(Manifestation m: manifestations.values()) {
+			if(m.getDate().equals(manifestation.getDate()) && 
+			m.getLocation().getAddress().equals(manifestation.getLocation().getAddress())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public Manifestation updateManifestation(String oldName, Manifestation manifestation, LocationDAO dao) {
+		Manifestation updatingManifestation = manifestations.get(oldName);
+		manifestations.remove(oldName);
+		updatingManifestation.setName(manifestation.getName());
+		updatingManifestation.setNumberOfSeats(manifestation.getNumberOfSeats());
+		updatingManifestation.setPriceOfRegularTicket(manifestation.getPriceOfRegularTicket());
+		updatingManifestation.setUrl(manifestation.getUrl());
+		updatingManifestation.setDate(manifestation.getDate());
+		updatingManifestation.setType(manifestation.getType());
+		dao.updateLocation(manifestation.getLocation(), updatingManifestation.getLocation());
+		updatingManifestation.setLocation(manifestation.getLocation());
+		manifestations.put(updatingManifestation.getName(), updatingManifestation);
+		
+		return updatingManifestation;
+	}
+	
 	public Collection<Manifestation> findRecent() {
 		Collection<Manifestation> all = manifestations.values().stream().sorted(Comparator.comparingLong(Manifestation::getDateLong))
                 .collect(Collectors.toList());
@@ -60,6 +91,7 @@ public class ManifestationDAO {
 	private void loadData(String contextPath, LocationDAO locationDAO) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		BufferedReader in = null;
+		boolean flag = false;
 		try {
 			String separator = System.getProperty("file.separator");
 			File file = new File(contextPath + "data" +separator+ "manifestations.txt");
@@ -78,6 +110,12 @@ public class ManifestationDAO {
 					Date date = sdf.parse(st.nextToken().trim());
 					Double priceOfRegularTickets = Double.parseDouble(st.nextToken().trim());
 					ManifestationState state = ManifestationState.valueOf(st.nextToken().trim());
+					if(state.equals(ManifestationState.ACTIVE)) {
+						if(date.before(new Date())) {
+							state = ManifestationState.INACTIVE;
+							flag = true;
+						}
+					}
 					Location location = locationDAO.find(Integer.parseInt(st.nextToken().trim()));
 					String url = st.nextToken().trim();
 					manifestations.put(name, 
@@ -94,11 +132,35 @@ public class ManifestationDAO {
 				catch (Exception e) { }
 			}
 		}
+		if(flag) saveData(contextPath);
+	}
+	
+	public void saveData(String contextPath) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
+		StringBuilder builder = new StringBuilder();
+		for(Manifestation m : manifestations.values()) {
+			builder.append(m.getName() + ";");
+			builder.append(m.getType() + ";");
+			builder.append(m.getNumberOfSeats() + ";");
+			builder.append(sdf.format(m.getDate()) + ";");
+			builder.append(m.getPriceOfRegularTicket() + ";");
+			builder.append(m.getState() + ";");
+			builder.append(m.getLocation().getId() + ";");
+			builder.append(m.getUrl() + "\n");
+		}
+		try {
+			String separator = System.getProperty("file.separator");
+			File file = new File(contextPath + "data" +separator+ "manifestations.txt");
+			PrintWriter myWriter = new PrintWriter(file);
+			myWriter.write(builder.toString());
+			myWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public String toString() {
 		return "ManifestationDAO [manifestations=" + manifestations + "]";
 	}
-	
 }
