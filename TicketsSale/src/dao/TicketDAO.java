@@ -3,6 +3,8 @@ package dao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,6 +87,26 @@ public class TicketDAO {
 				}
 				catch (Exception e) { }
 			}
+		}
+	}
+	
+	public void saveData(String contextPath) {
+		StringBuilder builder = new StringBuilder();
+		for(Ticket t : tickets.values()) {
+			builder.append(t.getId() + ";");
+			builder.append(t.getReservedManifestation().getName() + ";");
+			builder.append(t.getNameLastName() + ";");
+			builder.append(t.getState() + ";");
+			builder.append(t.getType() + "\n");
+		}
+		try {
+			String separator = System.getProperty("file.separator");
+			File file = new File(contextPath + "data" +separator+ "tickets.txt");
+			PrintWriter myWriter = new PrintWriter(file);
+			myWriter.write(builder.toString());
+			myWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

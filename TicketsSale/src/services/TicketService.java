@@ -1,6 +1,5 @@
 package services;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -25,6 +24,7 @@ import model.User;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
 import dao.TicketDAO;
+import dao.UserDAO;
 
 @Path("/tickets")
 public class TicketService {
@@ -85,12 +85,11 @@ public class TicketService {
 		}
 		
 		TicketDAO dao = (TicketDAO) ctx.getAttribute("TicketDAO");
+		UserDAO daouser = (UserDAO) ctx.getAttribute("UserDAO");
 		ManifestationDAO dao2 = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		
 		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
-		
-		// TODO save this
-		
+				
 		for (int i = 0; i < dto.getQuantity(); i++) {
 			Ticket t = new Ticket(dao.getNextId(), dao2.find(dto.getManifestation()), new Date(), dto.getPrice()/dto.getQuantity(), 
 					loggedUser.getName()+" "+loggedUser.getLastName(), TicketState.RESERVED, totOfTicket);
@@ -99,6 +98,8 @@ public class TicketService {
 			loggedUser.getTickets().add(t);
 		}
 		
+		daouser.saveData(ctx.getRealPath(""));
+		dao.saveData(ctx.getRealPath(""));
 		
 		return loggedUser;
 	}

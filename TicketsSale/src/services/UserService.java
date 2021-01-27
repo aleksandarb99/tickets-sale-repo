@@ -85,10 +85,9 @@ public class UserService {
 		}
 		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
-		// TODO SAVE THAT USERS TO FILE
 		
 		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
-			}
+	}
 	
 	@POST
 	@Path("/customer/")
@@ -170,24 +169,4 @@ public class UserService {
 	public void logout(@Context HttpServletRequest request) {
 		request.getSession().setAttribute("user", null);
 	}
-
-	
-    /*@GET
-    @Path("/sortiraj")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Student> getSortiranePacijente(@QueryParam("sorter")String sorter) {
-        StudentDAO pd = (StudentDAO) ctx.getAttribute("StudentDAO");
-        
-        if(sorter.equals("opadajuce")) {
-        	return pd.findAll().stream().sorted(Comparator.comparingInt(Student::getBodovi).reversed())
-                    .collect(Collectors.toList());
-        }
-        
-        if(sorter.equals("rastuce")) {
-        	return pd.findAll().stream().sorted(Comparator.comparingInt(Student::getBodovi))
-                    .collect(Collectors.toList());
-        }
-
-        return null;
-    }*/
 }
