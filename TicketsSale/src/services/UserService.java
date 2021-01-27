@@ -75,6 +75,22 @@ public class UserService {
 	}
 	
 	@POST
+	@Path("/addPoints/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void addPoints(@Context HttpServletRequest request, String dto) {
+		double numberOfPoints = Double.parseDouble(dto);
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		// TODO SAVE THAT USERS TO FILE
+		
+		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
+			}
+	
+	@POST
 	@Path("/customer/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)

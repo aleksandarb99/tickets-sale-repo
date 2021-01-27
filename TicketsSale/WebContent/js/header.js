@@ -48,6 +48,9 @@ Vue.component("our-header", {
         <li v-if="Object.keys(user).length == 7" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/manifestations">Review manifestations</a>
         </li>
+        <li v-if="Object.keys(user).length == 9 || Object.keys(user).length == 6" class="nav-item active">
+          <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/tickets">Tickets review</a>
+        </li>
       </ul>
       <ul class="nav justify-content-end">
           <li v-if="!activeUser" class="nav-item">

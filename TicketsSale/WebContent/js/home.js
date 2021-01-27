@@ -85,7 +85,7 @@ Vue.component("home", {
           a.priceOfRegularTicket > b.priceOfRegularTicket ? 1 : -1
         );
       }
-      // cini mi se da ne radi
+
       if (this.sorter == "6") {
         return data.sort((a, b) =>
           a.priceOfRegularTicket < b.priceOfRegularTicket ? 1 : -1

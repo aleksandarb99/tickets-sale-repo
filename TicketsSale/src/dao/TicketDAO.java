@@ -81,5 +81,16 @@ public class TicketDAO {
 			}
 		}
 	}
+
+	public String getNextId() {
+		String size = (tickets.values().size()+1) + "";
+		while (true) {
+			if(size.length()==10) {
+				break;
+			}
+			size = "0"+size;
+		}
+		return size;
+	}
 	
 }

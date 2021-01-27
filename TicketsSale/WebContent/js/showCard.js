@@ -7,7 +7,62 @@ Vue.component("show-card", {
         location: { address: null },
         date: null,
       },
+      loggedIn: false,
+      order: {
+        type: "1",
+        price: 0,
+        quantity: 1,
+      },
     };
+  },
+  methods: {
+    addDiscountPoints: function () {
+      // TODO vidi oko popusta
+      let points = (this.order.price / 1000) * 133;
+      axios
+        .post("/TicketsSale/rest/users/addPoints/", points.toString(), {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    orderTickets: function () {
+      this.addDiscountPoints();
+
+      let order = {
+        quantity: this.order.quantity,
+        type: this.order.type,
+        price: this.order.price,
+        manifestation: this.manifestation.name,
+      };
+
+      axios
+        .post("/TicketsSale/rest/tickets/order/", order)
+        .then((response) => {
+          localStorage.setItem("user", JSON.stringify(response.data));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    setPrice: function () {
+      this.order.price = this.manifestation.priceOfRegularTicket;
+    },
+    editPrice: function () {
+      if (this.order.type == "1") {
+        this.order.price =
+          this.order.quantity * this.manifestation.priceOfRegularTicket;
+      } else if (this.order.type == "2") {
+        this.order.price =
+          4 * this.order.quantity * this.manifestation.priceOfRegularTicket;
+      } else {
+        this.order.price =
+          2 * this.order.quantity * this.manifestation.priceOfRegularTicket;
+      }
+    },
   },
   mounted: function () {
     axios
@@ -15,6 +70,23 @@ Vue.component("show-card", {
       .then((response) => {
         this.manifestation = response.data;
       });
+
+    let a = localStorage.getItem("user");
+    if (a != null) {
+      let user = JSON.parse(a);
+
+      if (Object.keys(user).length == 9) {
+        axios
+          .get("/TicketsSale/rest/tickets")
+          .then((response) => {
+            this.loggedIn = true;
+            this.setPrice();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
   },
   beforeUpdate: function () {
     let longitude = this.manifestation.location.longitude;
@@ -76,6 +148,39 @@ Vue.component("show-card", {
           </div>
           <div class="col-md-6">
             <img :src="manifestation.url" class="img-fluid" alt="..." height="250" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button v-if="loggedIn && manifestation.state == 'ACTIVE'" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Buy ticket
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Buying tickets</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="lead my-3">Choose type of ticket</p>
+                    <select @change="editPrice" v-model="order.type" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
+                      <option selected value="1">REGULAR</option>
+                      <option value="2">VIP</option>
+                      <option value="3">FAN_PIT</option>
+                    </select>
+                    <p class="lead my-3">Quantity:</p>
+                    <input @change="editPrice" v-model="order.quantity" type="number" name="quantity" id="quantity" placeholder="Quantity" />
+                    <p class="lead my-3">Price : {{manifestation.priceOfRegularTicket}} x {{order.quantity}} = {{order.price}}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button @click="orderTickets" type="button" data-bs-dismiss="modal" class="btn btn-primary">Buy</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row">
