@@ -18,6 +18,9 @@ public class Seller extends User {
 	public List<Manifestation> getManifestations() {
 		return manifestations;
 	}
+	public void addManifestation(Manifestation manifestation) {
+		manifestations.add(manifestation);
+	}
 
 	public void setManifestations(List<Manifestation> manifestations) {
 		this.manifestations = manifestations;

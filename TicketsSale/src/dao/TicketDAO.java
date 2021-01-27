@@ -44,6 +44,12 @@ public class TicketDAO {
 		return ticket;
 	}
 	
+	private Double calculatePrice(Double regular, TypeOfTicket type) {
+		if(type.equals(TypeOfTicket.VIP)) return regular * 4;
+		if(type.equals(TypeOfTicket.FAN_PIT)) return regular * 2;
+		return regular;
+	}
+	
 	private void loadData(String contextPath, ManifestationDAO dao) {
 		BufferedReader in = null;
 		try {
@@ -60,12 +66,12 @@ public class TicketDAO {
 				while (st.hasMoreTokens()) {
 					String id = st.nextToken().trim();
 					String manifestationName = st.nextToken().trim();
-					Double price = Double.parseDouble(st.nextToken().trim());
 					String nameLastName = st.nextToken().trim();
 					TicketState state = TicketState.valueOf(st.nextToken().trim());
 					TypeOfTicket type = TypeOfTicket.valueOf(st.nextToken().trim());
 					Manifestation manifestation = dao.find(manifestationName);
 					Date date = manifestation.getDate();
+					Double price = calculatePrice(manifestation.getPriceOfRegularTicket(), type);
 					tickets.put(id, 
 					new Ticket(id, manifestation, date, price, nameLastName, state, type));
 				}		

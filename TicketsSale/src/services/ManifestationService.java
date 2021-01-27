@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,10 +19,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import model.Customer;
+import model.Location;
 import model.Manifestation;
+import model.ManifestationDTO;
+import model.ManifestationState;
 import model.QueryParams;
+import model.Seller;
+import model.Ticket;
+import model.TypeOfCustomer;
+import model.TypesOfCustomers;
+import model.User;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
+import dao.UserDAO;
 
 @Path("/manifestations")
 public class ManifestationService {
@@ -72,6 +83,68 @@ public class ManifestationService {
 		
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		return dao.find(name);
+	}
+	
+	@POST
+	@Path("/add/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Manifestation addManifestation(@Context HttpServletRequest request, Manifestation manifestation) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		if(dao.find(manifestation.getName()) != null) {
+			return null;
+		}
+		if(!dao.checkDateAndLocation(manifestation)) return null;
+		
+		Seller seller = (Seller)request.getSession().getAttribute("user");
+		manifestation.setState(ManifestationState.INACTIVE);
+		Manifestation addedManifestation = (Manifestation)dao.addManifestation(manifestation);
+		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
+		Location location = daoLocation.checkLocation(manifestation.getLocation());
+		if(location != null) {
+			manifestation.setLocation(location);
+		}else {
+			manifestation.setLocation(daoLocation.addLocation(manifestation.getLocation()));
+		}
+		seller.addManifestation(addedManifestation);
+		daoLocation.saveData(ctx.getRealPath(""));
+		dao.saveData(ctx.getRealPath(""));
+		UserDAO daoUser = (UserDAO) ctx.getAttribute("UserDAO");
+		daoUser.saveData(ctx.getRealPath(""));
+		return addedManifestation;
+	}
+	
+	@POST
+	@Path("/update/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Manifestation updateManifestation(@Context HttpServletRequest request, ManifestationDTO dto) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
+		
+		if(!dao.checkDateAndLocation(dto.getManifestation())) return null;
+		
+		if(dao.find(dto.getManifestation().getName()) != null && dto.getOldName().equals(dto.getManifestation().getName())) {
+			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoLocation.saveData(ctx.getRealPath(""));
+			dao.saveData(ctx.getRealPath(""));
+			return retM;
+		}
+		if(dao.find(dto.getManifestation().getName()) == null) {
+			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoLocation.saveData(ctx.getRealPath(""));
+			dao.saveData(ctx.getRealPath(""));
+			return retM;
+		}
+		
+		return null;
+		
 	}
 
 	@POST
@@ -157,35 +230,4 @@ public class ManifestationService {
 		
 		return true;
 	}
-	
-	/*@POST
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Customer getStudents(Customer customer) {
-		StudentDAO dao = (StudentDAO) ctx.getAttribute("StudentDAO");
-		if(dao.find(student.getBrojIndexa()) != null) {
-			return null;
-		}
-		return dao.addStudent(student);
-	}*/
-	
-    /*@GET
-    @Path("/sortiraj")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Student> getSortiranePacijente(@QueryParam("sorter")String sorter) {
-        StudentDAO pd = (StudentDAO) ctx.getAttribute("StudentDAO");
-        
-        if(sorter.equals("opadajuce")) {
-        	return pd.findAll().stream().sorted(Comparator.comparingInt(Student::getBodovi).reversed())
-                    .collect(Collectors.toList());
-        }
-        
-        if(sorter.equals("rastuce")) {
-        	return pd.findAll().stream().sorted(Comparator.comparingInt(Student::getBodovi))
-                    .collect(Collectors.toList());
-        }
-
-        return null;
-    }*/
 }

@@ -6,6 +6,10 @@
   user-select: none;
 }
 
+.selected {
+  background-color: greenyellow;
+}
+
 a {
   color: black;
 }
