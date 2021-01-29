@@ -2,6 +2,7 @@ Vue.component("show-card", {
   name: "show-card",
   data: function () {
     return {
+      mapIsSettled: false,
       manifestation: {
         name: null,
         location: { address: null },
@@ -16,6 +17,9 @@ Vue.component("show-card", {
     };
   },
   methods: {
+    line: function () {
+      return "a";
+    },
     addDiscountPoints: function () {
       // TODO vidi oko popusta
       let points = (this.order.price / 1000) * 133;
@@ -89,6 +93,10 @@ Vue.component("show-card", {
     }
   },
   beforeUpdate: function () {
+    if (this.mapIsSettled) return;
+
+    this.mapIsSettled = true;
+
     let longitude = this.manifestation.location.longitude;
     let latitude = this.manifestation.location.latitude;
 
@@ -130,7 +138,7 @@ Vue.component("show-card", {
     },
   },
   template: ` 
-    <div class="container-fluid"> 
+    <div> 
       <div class="p-4 p-md-5 mb-4 text-white rounded bg-secondary">
         <div class="col-md-6 px-0">
           <h1 class="display-4 font-italic">{{manifestation.name}}</h1>
@@ -152,10 +160,7 @@ Vue.component("show-card", {
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button v-if="loggedIn && manifestation.state == 'ACTIVE'" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Buy ticket
-            </button>
-            <!-- Modal -->
+            <button v-if="loggedIn && manifestation.state == 'ACTIVE'" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Buy ticket</button>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">

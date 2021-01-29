@@ -39,6 +39,21 @@ public class ManifestationDAO {
 		return manifestations.values();
 	}
 	
+	public Collection<Manifestation> findAllInactive() {
+		Collection<Manifestation> collection = manifestations.values().stream()
+				.filter(m -> m.getState().equals(ManifestationState.INACTIVE)).collect(Collectors.toList());
+		return collection;
+	}
+	
+	public boolean disableManifestation(Manifestation manifestation) {
+		Manifestation updatingManifestation = find(manifestation.getName());
+		if(updatingManifestation.getState().equals(ManifestationState.INACTIVE)) {
+			updatingManifestation.setState(ManifestationState.ACTIVE);
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean checkDateAndLocation(Manifestation manifestation) {
 		
 		if(manifestation.getDate().before(new Date())) return false;

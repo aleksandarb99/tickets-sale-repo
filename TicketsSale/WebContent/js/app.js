@@ -7,6 +7,7 @@ const Users = { template: "<users></users>" };
 const Manifestations = { template: "<manifestations></manifestations>" };
 const AddSeller = { template: "<addSeller></addSeller>" };
 const Tickets = { template: "<tickets></tickets>" };
+const Approve = { template: "<approve></approve>" };
 
 const router = new VueRouter({
   name: "router",
@@ -18,6 +19,7 @@ const router = new VueRouter({
     { path: "/showCard/:name", component: ShowCard },
     { path: "/profile", component: Profile },
     { path: "/users", component: Users },
+    { path: "/approve", component: Approve },
     { path: "/manifestations", component: Manifestations },
     { path: "/addSeller", component: AddSeller },
     { path: "/tickets", component: Tickets },

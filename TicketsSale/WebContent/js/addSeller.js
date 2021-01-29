@@ -11,8 +11,8 @@ Vue.component("addSeller", {
       return;
     }
     if (Object.keys(JSON.parse(loggedUser)).length != 6) {
-      //ako nije admin, ova provera verovatno ni ne treba jer se u headeru proverava da li je admin -> pa se dodaje dugme, kako bi se doslo do ovde uopste
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
+      return;
     }
   },
   template: `
