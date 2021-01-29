@@ -166,7 +166,6 @@ Vue.component("tickets", {
   },
   data: function () {
     return {
-      adminIsLoggedIn: false,
       shownTickets: null,
       tickets: null,
       sorter: "1",
@@ -190,9 +189,6 @@ Vue.component("tickets", {
     let user = JSON.parse(a);
 
     if (Object.keys(user).length == 6) {
-      alert("ADMIN");
-      adminIsLoggedIn = true;
-
       axios
         .get("/TicketsSale/rest/tickets")
         .then((response) => {
