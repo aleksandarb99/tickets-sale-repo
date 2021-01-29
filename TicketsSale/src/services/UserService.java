@@ -15,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-
+import model.Administrator;
 import model.Customer;
 import model.Manifestation;
 import model.Seller;
@@ -73,6 +73,57 @@ public class UserService {
 	public Collection<User> getUsers() {
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		return dao.findAll();
+	}
+	
+	@GET
+	@Path("/customers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Customer> getCustomers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Customer> list = new ArrayList<Customer>();
+		for (User user : dao.findAll()) {
+			try {
+				Customer customer = (Customer) user;
+				list.add(customer);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
+	}
+	
+	@GET
+	@Path("/sellers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Seller> getSellers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Seller> list = new ArrayList<Seller>();
+		for (User user : dao.findAll()) {
+			try {
+				Seller seller = (Seller) user;
+				list.add(seller);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
+	}
+	
+	@GET
+	@Path("/administrators/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Administrator> getAdmins() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Administrator> list = new ArrayList<Administrator>();
+		for (User user : dao.findAll()) {
+			try {
+				Administrator admin = (Administrator) user;
+				list.add(admin);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
 	}
 	
 	@POST
