@@ -119,9 +119,7 @@ public class UserDAO {
 						}
 						Double collectedPoints = Double.parseDouble(st.nextToken().trim());
 						TypesOfCustomers type = TypesOfCustomers.valueOf(st.nextToken().trim());
-						Double discount = Double.parseDouble(st.nextToken().trim());
-						Integer requiredPoints = Integer.parseInt(st.nextToken().trim());
-						TypeOfCustomer customerType = new TypeOfCustomer(type, discount, requiredPoints);
+						TypeOfCustomer customerType = new TypeOfCustomer(type);
 						Customer customer = new Customer(username, password, name, lastName, gender, date, collectedPoints, customerType);
 						customer.setTickets(customerTickets);
 						users.put(username, customer);
@@ -184,9 +182,7 @@ public class UserDAO {
 					}
 				}
 				builder.append(customer.getCollectedPoints() + ";");
-				builder.append(customer.getType().getName() + ";");
-				builder.append(customer.getType().getDiscount() + ";");
-				builder.append(customer.getType().getRequiredPoints());
+				builder.append(customer.getType().getName());
 				
 			}
 			builder.append("\n");

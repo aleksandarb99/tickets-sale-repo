@@ -15,6 +15,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.glassfish.jersey.internal.inject.Custom;
+
 import model.Customer;
 import model.Manifestation;
 import model.Seller;
@@ -87,7 +89,32 @@ public class UserService {
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		
 		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
+		
+		if(loggedUser.getType().getName().equals(TypesOfCustomers.GOLD)) {
+			return;
+		}
+		// Proveri da li treba da se prebaci status kupca
+		if(loggedUser.getType().getRequiredPoints() < loggedUser.getCollectedPoints()) {
+			changeCustomerStatusOfUser(loggedUser);
+		}
+		
 	}
+	
+	private void changeCustomerStatusOfUser(Customer user) {
+		if(user.getType().getName().equals(TypesOfCustomers.BRONZE)) {
+			user.getType().setDiscount(3);
+			user.getType().setRequiredPoints(4000);
+			user.getType().setName(TypesOfCustomers.SILVER);;
+		}
+		if(user.getType().getName().equals(TypesOfCustomers.SILVER)) {
+			user.getType().setDiscount(5);
+			user.getType().setRequiredPoints(Integer.MAX_VALUE);
+			user.getType().setName(TypesOfCustomers.GOLD);;
+		}
+		System.out.println(user.getType());
+	}
+	
+	// TODO proveri dal je GOLD ILI SILVER
 	
 	@POST
 	@Path("/customer/")
@@ -102,7 +129,7 @@ public class UserService {
 			return null;
 		}
 		customer.setTickets(new ArrayList<Ticket>());
-		customer.setType(new TypeOfCustomer(TypesOfCustomers.BRONZE, 0, 500));
+		customer.setType(new TypeOfCustomer(TypesOfCustomers.BRONZE));
 		Customer addedCustomer = (Customer)dao.addUser(customer);
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;

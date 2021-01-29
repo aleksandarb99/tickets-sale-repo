@@ -1,7 +1,9 @@
 package services;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -20,6 +22,7 @@ import model.OrderDTO;
 import model.Ticket;
 import model.TicketState;
 import model.TypeOfTicket;
+import model.TypesOfCustomers;
 import model.User;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
@@ -55,6 +58,30 @@ public class TicketService {
 		if (ctx.getAttribute("TicketDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("TicketDAO",  new TicketDAO(contextPath, manifestationDAO));
+		}
+	}
+	
+	@POST
+	@Path("/cancelTicket/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void cancelTicket(@Context HttpServletRequest request, String id) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		Customer c = (Customer) request.getSession().getAttribute("user");
+		
+		TicketDAO dao = (TicketDAO) ctx.getAttribute("TicketDAO");
+		Ticket t = dao.find(id);
+		
+		UserDAO dao2 = (UserDAO) ctx.getAttribute("UserDAO");
+		
+		if(t != null) {
+			t.setState(TicketState.CANCELED);
+			c.setCollectedPoints(c.getCollectedPoints() - t.getPrice() / 1000 * 133 * 4);
+						
+			dao2.saveData(ctx.getRealPath(""));
+			dao.saveData(ctx.getRealPath(""));
 		}
 	}
 	
@@ -98,6 +125,10 @@ public class TicketService {
 			loggedUser.getTickets().add(t);
 		}
 		
+		Manifestation m = dao2.find(dto.getManifestation());
+		m.setNumberOfSeats(m.getNumberOfSeats()-dto.getQuantity());
+		
+		dao2.saveData(ctx.getRealPath(""));
 		daouser.saveData(ctx.getRealPath(""));
 		dao.saveData(ctx.getRealPath(""));
 		
