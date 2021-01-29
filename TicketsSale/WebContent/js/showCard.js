@@ -83,13 +83,11 @@ Vue.component("show-card", {
       this.addDiscountPoints();
     },
     setPrice: function () {
-      console.log("SETPRICE");
       this.order.price =
         this.manifestation.priceOfRegularTicket *
         (1 - this.type.discount / 100);
     },
     editPrice: function () {
-      console.log("EDITPRICE");
       if (this.order.type == "1") {
         this.order.price =
           this.order.quantity * this.manifestation.priceOfRegularTicket;
@@ -197,14 +195,10 @@ Vue.component("show-card", {
         </div>
         <div class="row">
           <div class="col-md-12">
-<<<<<<< HEAD
             <button v-if="loggedIn && manifestation.state == 'ACTIVE' && manifestation.numberOfSeats > 0" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
               Buy ticket
             </button>
             <!-- Modal -->
-=======
-            <button v-if="loggedIn && manifestation.state == 'ACTIVE'" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Buy ticket</button>
->>>>>>> develop
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
