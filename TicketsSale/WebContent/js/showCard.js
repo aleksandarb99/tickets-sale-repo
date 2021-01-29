@@ -79,11 +79,13 @@ Vue.component("show-card", {
       this.addDiscountPoints();
     },
     setPrice: function () {
+      console.log("SETPRICE");
       this.order.price =
         this.manifestation.priceOfRegularTicket *
         (1 - this.type.discount / 100);
     },
     editPrice: function () {
+      console.log("EDITPRICE");
       if (this.order.type == "1") {
         this.order.price =
           this.order.quantity * this.manifestation.priceOfRegularTicket;

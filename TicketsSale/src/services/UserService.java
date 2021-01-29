@@ -15,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.glassfish.jersey.internal.inject.Custom;
 
 import model.Customer;
 import model.Manifestation;
@@ -86,7 +85,6 @@ public class UserService {
 			return;
 		}
 		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
-		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		
 		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
 		
@@ -114,7 +112,6 @@ public class UserService {
 		System.out.println(user.getType());
 	}
 	
-	// TODO proveri dal je GOLD ILI SILVER
 	
 	@POST
 	@Path("/customer/")

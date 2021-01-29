@@ -19,17 +19,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import model.Customer;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationDTO;
 import model.ManifestationState;
 import model.QueryParams;
 import model.Seller;
-import model.Ticket;
-import model.TypeOfCustomer;
-import model.TypesOfCustomers;
-import model.User;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
 import dao.UserDAO;
