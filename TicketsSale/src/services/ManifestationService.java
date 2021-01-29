@@ -64,6 +64,14 @@ public class ManifestationService {
 	}
 	
 	@GET
+	@Path("/inactive")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getInactiveManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAllInactive();
+	}
+	
+	@GET
 	@Path("/recent/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getRecentManifestations() {
@@ -110,6 +118,25 @@ public class ManifestationService {
 		UserDAO daoUser = (UserDAO) ctx.getAttribute("UserDAO");
 		daoUser.saveData(ctx.getRealPath(""));
 		return addedManifestation;
+	}
+	
+	@POST
+	@Path("/approve/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Manifestation approveManifestation(@Context HttpServletRequest request, Manifestation manifestation) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+			return null;
+		}
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		boolean retVal = dao.disableManifestation(manifestation);
+		
+		if(retVal) {
+			dao.saveData(ctx.getRealPath(""));
+			return manifestation;
+		}
+		
+		return null;
 	}
 	
 	@POST
