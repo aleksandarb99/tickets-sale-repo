@@ -83,7 +83,7 @@ public class UserService {
 				if(ticket.getState().equals(TicketState.CANCELED)) {
 					long diff = current.getTime() - ticket.getDate().getTime();
 					int days = (int) (diff / 1000 / 60 / 60 / 24);
-
+					
 			        if(days <= 30) {
 			        	counter++;
 			        }

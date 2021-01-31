@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ public class TicketDAO {
 	}
 	
 	private void loadData(String contextPath, ManifestationDAO dao) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		BufferedReader in = null;
 		try {
 			String separator = System.getProperty("file.separator");
@@ -71,11 +73,10 @@ public class TicketDAO {
 					String nameLastName = st.nextToken().trim();
 					TicketState state = TicketState.valueOf(st.nextToken().trim());
 					TypeOfTicket type = TypeOfTicket.valueOf(st.nextToken().trim());
+					Date date = sdf.parse(st.nextToken().trim());	
 					Manifestation manifestation = dao.find(manifestationName);
-					Date date = manifestation.getDate();
 					Double price = calculatePrice(manifestation.getPriceOfRegularTicket(), type);
-					tickets.put(id, 
-					new Ticket(id, manifestation, date, price, nameLastName, state, type));
+					tickets.put(id, new Ticket(id, manifestation, date, price, nameLastName, state, type));
 				}		
 			}
 		} catch (Exception ex) {
@@ -91,13 +92,15 @@ public class TicketDAO {
 	}
 	
 	public void saveData(String contextPath) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		StringBuilder builder = new StringBuilder();
 		for(Ticket t : tickets.values()) {
 			builder.append(t.getId() + ";");
 			builder.append(t.getReservedManifestation().getName() + ";");
 			builder.append(t.getNameLastName() + ";");
 			builder.append(t.getState() + ";");
-			builder.append(t.getType() + "\n");
+			builder.append(t.getType() + ";");
+			builder.append(sdf.format(t.getDate()) + "\n");
 		}
 		try {
 			String separator = System.getProperty("file.separator");

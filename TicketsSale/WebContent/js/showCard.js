@@ -22,7 +22,7 @@ Vue.component("show-card", {
     decreateSeats: function (quantity) {
       let data = JSON.parse(localStorage.getItem("backupData"));
 
-      for (const m of data.manifestation) {
+      for (const m of data.manifestations) {
         m.name == this.manifestation.name
           ? (m.numberOfSeats -= quantity)
           : (m.numberOfSeats -= 0);
