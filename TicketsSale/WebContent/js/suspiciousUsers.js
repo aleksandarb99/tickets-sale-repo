@@ -1,4 +1,40 @@
 Vue.component("susUsers", {
+  methods: {
+    cancel: function (event, ticket) {
+      for (const t of this.tickets) {
+        if (t.id == ticket.id) {
+          ticket.state = "CANCELED";
+        }
+      }
+      for (const t of this.shownTickets) {
+        if (t.id == ticket.id) {
+          ticket.state = "CANCELED";
+        }
+      }
+
+      let user = JSON.parse(localStorage.getItem("user"));
+      user.tickets = this.tickets;
+
+      let lostPoints = (ticket.price / 1000) * 133 * 4;
+      user.collectedPoints = user.collectedPoints - lostPoints;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      event.target.disabled = true;
+
+      axios
+        .post("/TicketsSale/rest/tickets/cancelTicket/", ticket.id, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .then((response) => {
+          ticket.state = "CANCELED";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
   data: function () {
     return {
       users: [],
@@ -46,6 +82,7 @@ Vue.component("susUsers", {
                         <th scope="col">Date of birth</th>
                         <th scope="col">Role</th>
                         <th scope="col">Collected Points</th>
+                        <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,6 +95,7 @@ Vue.component("susUsers", {
                         <td>{{user.dateOfBirth | dateFormat('DD.MM.YYYY')}}</td>
                         <td>{{user.role}}</td>
                         <td>{{user.points}}</td>
+                        <td><button @click="block($event,t)" type="button" class="btn btn-secondary btn-sm">Block</button></td>
                         </tr>
                     </tbody>
                 </table>

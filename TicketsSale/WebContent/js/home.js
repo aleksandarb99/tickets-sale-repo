@@ -108,6 +108,7 @@ Vue.component("home", {
         .post("/TicketsSale/rest/manifestations", this.queryParams)
         .then((response) => {
           this.manifestations = response.data;
+          this.saveBackup();
           this.updateView();
         })
         .catch((err) => {
@@ -116,6 +117,8 @@ Vue.component("home", {
     },
     displayCard: function (name) {
       this.selectedManifestation = name;
+    },
+    saveBackup: function () {
       let backupData = {
         sorter: this.sorter,
         type: this.type,

@@ -12,6 +12,7 @@ Vue.component("our-header", {
         this.activeUser = false;
         this.user = {};
         localStorage.removeItem("user");
+        localStorage.removeItem("backupData");
         window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       });
     },
