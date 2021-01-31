@@ -8,6 +8,8 @@ Vue.component("show-card", {
         location: { address: null },
         date: null,
       },
+      mapIsBuilt: false,
+      type: { name: "", discount: 0 },
       loggedIn: false,
       order: {
         type: "1",
@@ -17,11 +19,27 @@ Vue.component("show-card", {
     };
   },
   methods: {
+    decreateSeats: function (quantity) {
+      let data = JSON.parse(localStorage.getItem("backupData"));
+
+      for (const m of data.manifestation) {
+        m.name == this.manifestation.name
+          ? (m.numberOfSeats -= quantity)
+          : (m.numberOfSeats -= 0);
+      }
+
+      for (const m of data.sortedFilteredManifestations) {
+        m.name == this.manifestation.name
+          ? (m.numberOfSeats -= quantity)
+          : (m.numberOfSeats -= 0);
+      }
+
+      localStorage.setItem("backupData", JSON.stringify(data));
+    },
     line: function () {
       return "a";
     },
     addDiscountPoints: function () {
-      // TODO vidi oko popusta
       let points = (this.order.price / 1000) * 133;
       axios
         .post("/TicketsSale/rest/users/addPoints/", points.toString(), {
@@ -29,13 +47,19 @@ Vue.component("show-card", {
             "Content-Type": "text/plain",
           },
         })
+        .then((response) => {
+          this.sendOrder();
+        })
         .catch((err) => {
           console.log(err);
         });
     },
-    orderTickets: function () {
-      this.addDiscountPoints();
-
+    checkIfStatusIsChanged: function (type) {
+      if (this.type.name != type) {
+        this.type = type;
+      }
+    },
+    sendOrder: function () {
       let order = {
         quantity: this.order.quantity,
         type: this.order.type,
@@ -46,14 +70,22 @@ Vue.component("show-card", {
       axios
         .post("/TicketsSale/rest/tickets/order/", order)
         .then((response) => {
+          this.checkIfStatusIsChanged(response.data.type);
           localStorage.setItem("user", JSON.stringify(response.data));
+          this.manifestation.numberOfSeats -= order.quantity;
+          this.decreateSeats(order.quantity);
         })
         .catch((err) => {
           console.log(err);
         });
     },
+    orderTickets: function () {
+      this.addDiscountPoints();
+    },
     setPrice: function () {
-      this.order.price = this.manifestation.priceOfRegularTicket;
+      this.order.price =
+        this.manifestation.priceOfRegularTicket *
+        (1 - this.type.discount / 100);
     },
     editPrice: function () {
       if (this.order.type == "1") {
@@ -66,6 +98,7 @@ Vue.component("show-card", {
         this.order.price =
           2 * this.order.quantity * this.manifestation.priceOfRegularTicket;
       }
+      this.order.price = this.order.price * (1 - this.type.discount / 100);
     },
   },
   mounted: function () {
@@ -80,6 +113,8 @@ Vue.component("show-card", {
       let user = JSON.parse(a);
 
       if (Object.keys(user).length == 9) {
+        this.type = user.type;
+
         axios
           .get("/TicketsSale/rest/tickets")
           .then((response) => {
@@ -160,7 +195,10 @@ Vue.component("show-card", {
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button v-if="loggedIn && manifestation.state == 'ACTIVE'" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Buy ticket</button>
+            <button v-if="loggedIn && manifestation.state == 'ACTIVE' && manifestation.numberOfSeats > 0" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Buy ticket
+            </button>
+            <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -177,11 +215,14 @@ Vue.component("show-card", {
                     </select>
                     <p class="lead my-3">Quantity:</p>
                     <input @change="editPrice" v-model="order.quantity" type="number" name="quantity" id="quantity" placeholder="Quantity" />
-                    <p class="lead my-3">Price : {{manifestation.priceOfRegularTicket}} x {{order.quantity}} = {{order.price}}</p>
+                    <p class="lead my-3">Price : {{manifestation.priceOfRegularTicket}} x {{order.quantity}} - {{type.discount}}%({{type.name}}) = {{order.price}}</p>
+                    <div v-if="order.quantity > manifestation.numberOfSeats" class="alert alert-dark" role="alert">
+                      There are not that many tickets
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button @click="orderTickets" type="button" data-bs-dismiss="modal" class="btn btn-primary">Buy</button>
+                    <button :disabled="order.quantity > manifestation.numberOfSeats ? true : false"  @click="orderTickets" type="button" data-bs-dismiss="modal" class="btn btn-primary">Buy</button>
                   </div>
                 </div>
               </div>

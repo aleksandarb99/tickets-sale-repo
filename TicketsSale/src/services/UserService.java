@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import model.Administrator;
 import model.Customer;
 import model.Manifestation;
 import model.Seller;
@@ -74,6 +75,57 @@ public class UserService {
 		return dao.findAll();
 	}
 	
+	@GET
+	@Path("/customers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Customer> getCustomers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Customer> list = new ArrayList<Customer>();
+		for (User user : dao.findAll()) {
+			try {
+				Customer customer = (Customer) user;
+				list.add(customer);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
+	}
+	
+	@GET
+	@Path("/sellers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Seller> getSellers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Seller> list = new ArrayList<Seller>();
+		for (User user : dao.findAll()) {
+			try {
+				Seller seller = (Seller) user;
+				list.add(seller);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
+	}
+	
+	@GET
+	@Path("/administrators/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Administrator> getAdmins() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		ArrayList<Administrator> list = new ArrayList<Administrator>();
+		for (User user : dao.findAll()) {
+			try {
+				Administrator admin = (Administrator) user;
+				list.add(admin);
+			} catch (Exception e) {
+				
+			}
+		}
+		return list;
+	}
+	
 	@POST
 	@Path("/addPoints/")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -84,10 +136,33 @@ public class UserService {
 			return;
 		}
 		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
-		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
 		
 		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
+		
+		if(loggedUser.getType().getName().equals(TypesOfCustomers.GOLD)) {
+			return;
+		}
+		// Proveri da li treba da se prebaci status kupca
+		if(loggedUser.getType().getRequiredPoints() < loggedUser.getCollectedPoints()) {
+			changeCustomerStatusOfUser(loggedUser);
+		}
+		
 	}
+	
+	private void changeCustomerStatusOfUser(Customer user) {
+		if(user.getType().getName().equals(TypesOfCustomers.BRONZE)) {
+			user.getType().setDiscount(3);
+			user.getType().setRequiredPoints(4000);
+			user.getType().setName(TypesOfCustomers.SILVER);;
+		}
+		if(user.getType().getName().equals(TypesOfCustomers.SILVER)) {
+			user.getType().setDiscount(5);
+			user.getType().setRequiredPoints(Integer.MAX_VALUE);
+			user.getType().setName(TypesOfCustomers.GOLD);;
+		}
+		System.out.println(user.getType());
+	}
+	
 	
 	@POST
 	@Path("/customer/")
@@ -102,7 +177,7 @@ public class UserService {
 			return null;
 		}
 		customer.setTickets(new ArrayList<Ticket>());
-		customer.setType(new TypeOfCustomer(TypesOfCustomers.BRONZE, 0, 500));
+		customer.setType(new TypeOfCustomer(TypesOfCustomers.BRONZE));
 		Customer addedCustomer = (Customer)dao.addUser(customer);
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;
