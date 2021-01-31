@@ -3,6 +3,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -20,6 +21,7 @@ import model.Customer;
 import model.Manifestation;
 import model.Seller;
 import model.Ticket;
+import model.TicketState;
 import model.TypeOfCustomer;
 import model.TypesOfCustomers;
 import model.User;
@@ -65,6 +67,35 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("UserDAO", new UserDAO(contextPath, ticketDAO, manifestationDAO));
 		}
+	}
+	
+	@GET
+	@Path("/susUsers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Customer> getSusUsers() {	
+		Collection<Customer> users = getCustomers();
+		Collection<Customer> retVal = new ArrayList<Customer>();
+		
+		for (Customer customer : users) {
+			int counter = 0;
+			for (Ticket ticket : customer.getTickets()) {
+				Date current = new Date();
+				if(ticket.getState().equals(TicketState.CANCELED)) {
+					long diff = current.getTime() - ticket.getDate().getTime();
+					int days = (int) (diff / 1000 / 60 / 60 / 24);
+
+			        if(days <= 30) {
+			        	counter++;
+			        }
+				}
+			}
+			
+			if(counter > 5) {
+				retVal.add(customer);
+			}
+		}
+		
+		return retVal;
 	}
 	
 	@GET

@@ -79,4 +79,12 @@ public class Ticket {
 	public void setType(TypeOfTicket type) {
 		this.type = type;
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", reservedManifestation=" + reservedManifestation + ", date=" + date + ", price="
+				+ price + ", nameLastName=" + nameLastName + ", state=" + state + ", type=" + type + "]";
+	}
+	
+	
 }
