@@ -1,0 +1,3 @@
+#Pomocni id;Customer username;Manifestation name;text;grade;state
+1;jovansx;IVAN BOSILJIC - NASE VECE;Odlicno izvedba sve pohvale!;5;REJECTED
+2;aca;IVAN BOSILJIC - NASE VECE;Groznooo;1;REJECTED

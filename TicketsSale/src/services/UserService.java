@@ -59,6 +59,8 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");
 	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
 			ctx.setAttribute("TicketDAO", ticketDAO);
+		} else {
+			ticketDAO = (TicketDAO) ctx.getAttribute("TicketDAO");
 		}
 		if (ctx.getAttribute("UserDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
@@ -84,7 +86,7 @@ public class UserService {
 			return;
 		}
 		Customer loggedUser = (Customer)request.getSession().getAttribute("user");
-		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO"); //Treba obrisati verovatno
 		
 		loggedUser.setCollectedPoints(loggedUser.getCollectedPoints()+numberOfPoints);
 	}
