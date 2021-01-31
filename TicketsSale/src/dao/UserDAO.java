@@ -90,6 +90,7 @@ public class UserDAO {
 					}
 					if(typeOfUser.equals("SELLER")) {
 						String manifestations = st.nextToken().trim();
+						boolean blocked = Boolean.parseBoolean(st.nextToken().trim());
 						List<Manifestation> sellerManifestations = new ArrayList<Manifestation>();
 						if(!manifestations.equals("NO_MANIFESTATIONS") && !manifestations.contains(",")) {
 							sellerManifestations.add(manDao.find(manifestations));
@@ -100,7 +101,7 @@ public class UserDAO {
 								sellerManifestations.add(manDao.find(param));
 							}
 						}
-						Seller seller = new Seller(username, password, name, lastName, gender, date);
+						Seller seller = new Seller(username, password, name, lastName, gender, date, blocked);
 						seller.setManifestations(sellerManifestations);
 						users.put(username, seller);
 						continue;
@@ -119,8 +120,9 @@ public class UserDAO {
 						}
 						Double collectedPoints = Double.parseDouble(st.nextToken().trim());
 						TypesOfCustomers type = TypesOfCustomers.valueOf(st.nextToken().trim());
+						boolean blocked = Boolean.parseBoolean(st.nextToken().trim());
 						TypeOfCustomer customerType = new TypeOfCustomer(type);
-						Customer customer = new Customer(username, password, name, lastName, gender, date, collectedPoints, customerType);
+						Customer customer = new Customer(username, password, name, lastName, gender, date, collectedPoints, customerType, blocked);
 						customer.setTickets(customerTickets);
 						users.put(username, customer);
 						continue;
@@ -165,6 +167,10 @@ public class UserDAO {
 						}
 					}
 				}
+				builder.append(";");
+				builder.append(((Seller) user).isBlocked());
+				
+				
 			}else {
 				builder.append("CUSTOMER;");
 				Customer customer = (Customer) user;
@@ -182,8 +188,8 @@ public class UserDAO {
 					}
 				}
 				builder.append(customer.getCollectedPoints() + ";");
-				builder.append(customer.getType().getName());
-				
+				builder.append(customer.getType().getName() + ";");
+				builder.append(((Customer) user).isBlocked());
 			}
 			builder.append("\n");
 		}

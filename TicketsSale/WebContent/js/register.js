@@ -1,7 +1,7 @@
 Vue.component("register", {
   data: function () {
     return {
-      user: { gender: "CHOOSE" },
+      user: { gender: "CHOOSE", isBlocked: false },
       activeUser: false,
     };
   },

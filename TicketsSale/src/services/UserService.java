@@ -266,8 +266,56 @@ public class UserService {
 		User loggedUser = dao.find(params[0]);
 		if(loggedUser == null) return null;
 		if(!loggedUser.getPassword().equals(params[1])) return null;
+		
+		// Ako je kupac ili prodavac proveri da li je blokiran
+		try {
+			Customer c = (Customer) loggedUser;
+			if(c.isBlocked()) {
+				return null;
+			}
+		} catch (Exception e) {
+			
+		}
+		try {
+			Seller s = (Seller) loggedUser;
+			if(s.isBlocked()) {
+				return null;
+			}
+		} catch (Exception e) {	
+		}
+		
 		request.getSession().setAttribute("user", loggedUser);
 		return loggedUser;
+	}
+	
+	@POST
+	@Path("/block/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void blockUser(@Context HttpServletRequest request, String username) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		UserDAO dao2 = (UserDAO) ctx.getAttribute("UserDAO");
+		
+		Administrator a;
+		try {
+			a = (Administrator) request.getSession().getAttribute("user");
+		} catch (Exception e) {
+			return;
+		}
+		
+		try {
+			Customer user = (Customer)dao2.find(username);
+			user.setBlocked(true);
+		} catch (Exception e) {
+		}
+		try {
+			Seller user = (Seller)dao2.find(username);
+			user.setBlocked(true);
+		} catch (Exception e) {
+		}
+		dao2.saveData(ctx.getRealPath(""));
 	}
 	
 	@GET
