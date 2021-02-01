@@ -19,8 +19,8 @@ public class Seller extends User {
 		this.isBlocked = isBlocked;
 	}
 
-	public Seller(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth,  boolean isBlocked) {
-		super(username, password, name, lastName, gender, dateOfBirth);
+	public Seller(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth,  boolean isBlocked, boolean isDeleted) {
+		super(username, password, name, lastName, gender, dateOfBirth, isDeleted);
 		this.manifestations = new ArrayList<Manifestation>();
 		this.isBlocked = isBlocked;
 	}

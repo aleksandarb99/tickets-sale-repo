@@ -38,7 +38,7 @@ Vue.component("tickets", {
       let a = localStorage.getItem("user");
       let user = JSON.parse(a);
 
-      if (Object.keys(user).length == 6) {
+      if (Object.keys(user).length == 7) {
         return false;
       }
 
@@ -195,7 +195,7 @@ Vue.component("tickets", {
     }
     let user = JSON.parse(a);
 
-    if (Object.keys(user).length == 6) {
+    if (Object.keys(user).length == 7) {
       axios
         .get("/TicketsSale/rest/tickets")
         .then((response) => {

@@ -83,14 +83,17 @@ public class UserDAO {
 					Date date = sdf.parse(st.nextToken().trim());
 					//Razvrstavanje korisnika
 					String typeOfUser = st.nextToken().trim();
+
 					if(typeOfUser.equals("ADMIN")) {
+						boolean deleteda = Boolean.parseBoolean(st.nextToken().trim());
 						users.put(username, 
-								new Administrator(username, password, name, lastName, gender, date));
+								new Administrator(username, password, name, lastName, gender, date, deleteda));
 						continue;
 					}
 					if(typeOfUser.equals("SELLER")) {
 						String manifestations = st.nextToken().trim();
 						boolean blocked = Boolean.parseBoolean(st.nextToken().trim());
+						boolean deleted = Boolean.parseBoolean(st.nextToken().trim());
 						List<Manifestation> sellerManifestations = new ArrayList<Manifestation>();
 						if(!manifestations.equals("NO_MANIFESTATIONS") && !manifestations.contains(",")) {
 							sellerManifestations.add(manDao.find(manifestations));
@@ -101,7 +104,7 @@ public class UserDAO {
 								sellerManifestations.add(manDao.find(param));
 							}
 						}
-						Seller seller = new Seller(username, password, name, lastName, gender, date, blocked);
+						Seller seller = new Seller(username, password, name, lastName, gender, date, blocked, deleted);
 						seller.setManifestations(sellerManifestations);
 						users.put(username, seller);
 						continue;
@@ -121,8 +124,9 @@ public class UserDAO {
 						Double collectedPoints = Double.parseDouble(st.nextToken().trim());
 						TypesOfCustomers type = TypesOfCustomers.valueOf(st.nextToken().trim());
 						boolean blocked = Boolean.parseBoolean(st.nextToken().trim());
+						boolean deleted = Boolean.parseBoolean(st.nextToken().trim());
 						TypeOfCustomer customerType = new TypeOfCustomer(type);
-						Customer customer = new Customer(username, password, name, lastName, gender, date, collectedPoints, customerType, blocked);
+						Customer customer = new Customer(username, password, name, lastName, gender, date, collectedPoints, customerType, blocked, deleted);
 						customer.setTickets(customerTickets);
 						users.put(username, customer);
 						continue;
@@ -152,7 +156,7 @@ public class UserDAO {
 			builder.append(user.getGender() + ";");
 			builder.append(sdf.format(user.getDateOfBirth()) + ";");
 			if(user instanceof Administrator) {
-				builder.append("ADMIN");
+				builder.append("ADMIN;");
 			}else if(user instanceof Seller) {
 				builder.append("SELLER;");
 				Seller seller = (Seller) user;
@@ -168,7 +172,7 @@ public class UserDAO {
 					}
 				}
 				builder.append(";");
-				builder.append(((Seller) user).isBlocked());
+				builder.append(((Seller) user).isBlocked() + ";");
 				
 				
 			}else {
@@ -189,8 +193,9 @@ public class UserDAO {
 				}
 				builder.append(customer.getCollectedPoints() + ";");
 				builder.append(customer.getType().getName() + ";");
-				builder.append(((Customer) user).isBlocked());
+				builder.append(((Customer) user).isBlocked() + ";");
 			}
+			builder.append(user.isDeleted());
 			builder.append("\n");
 		}
 		try {

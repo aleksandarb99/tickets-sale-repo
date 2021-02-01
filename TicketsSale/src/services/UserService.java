@@ -99,14 +99,6 @@ public class UserService {
 	}
 	
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<User> getUsers() {
-		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
-		return dao.findAll();
-	}
-	
-	@GET
 	@Path("/customers/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Customer> getCustomers() {
@@ -281,7 +273,12 @@ public class UserService {
 			if(s.isBlocked()) {
 				return null;
 			}
+			
 		} catch (Exception e) {	
+		}
+		
+		if(loggedUser.isDeleted()) {
+			return null;
 		}
 		
 		request.getSession().setAttribute("user", loggedUser);
@@ -315,6 +312,22 @@ public class UserService {
 			user.setBlocked(true);
 		} catch (Exception e) {
 		}
+		dao2.saveData(ctx.getRealPath(""));
+	}
+	
+	@POST
+	@Path("/delete/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void delUser(@Context HttpServletRequest request, String username) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		UserDAO dao2 = (UserDAO) ctx.getAttribute("UserDAO");
+		
+		User user = dao2.find(username);
+		user.setDeleted(true);
+
 		dao2.saveData(ctx.getRealPath(""));
 	}
 	

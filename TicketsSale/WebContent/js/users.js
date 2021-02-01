@@ -1,5 +1,33 @@
 Vue.component("users", {
   methods: {
+    del: function (event, user) {
+      event.target.disabled = true;
+      axios
+        .post("/TicketsSale/rest/users/delete/", user.username, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .then((response) => {
+          user.deleted = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    checkIfDeleted: function (user) {
+      if (user.role == "Administrator") {
+        return false;
+      }
+
+      if (user.deleted != undefined) {
+        if (user.deleted) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
     checkIfBlocked: function (user) {
       if (user.blocked != undefined) {
         if (user.blocked) {
@@ -120,7 +148,7 @@ Vue.component("users", {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }
-    if (Object.keys(JSON.parse(user)).length != 6) {
+    if (Object.keys(JSON.parse(user)).length != 7) {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }
@@ -267,6 +295,7 @@ Vue.component("users", {
                 <th scope="col">Role</th>
                 <th scope="col">Collected Points</th>
                 <th scope="col">Action</th>
+                <th scope="col">Logical Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -280,6 +309,7 @@ Vue.component("users", {
                   <td>{{user.role}}</td>
                   <td>{{user.points}}</td>
                   <td><button v-if="checkIfBlocked(user)" @click="block($event,user)" type="button" class="btn btn-secondary btn-sm">Block</button></td>
+                  <td><button v-if="checkIfDeleted(user)" @click="del($event,user)" type="button" class="btn btn-secondary btn-sm">Delete</button></td>
                 </tr>
               </tbody>
             </table>
