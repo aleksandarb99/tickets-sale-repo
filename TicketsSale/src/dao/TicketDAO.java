@@ -73,10 +73,11 @@ public class TicketDAO {
 					String nameLastName = st.nextToken().trim();
 					TicketState state = TicketState.valueOf(st.nextToken().trim());
 					TypeOfTicket type = TypeOfTicket.valueOf(st.nextToken().trim());
-					Date date = sdf.parse(st.nextToken().trim());	
+					Date date = sdf.parse(st.nextToken().trim());
+					boolean deleted = Boolean.parseBoolean(st.nextToken().trim());
 					Manifestation manifestation = dao.find(manifestationName);
 					Double price = calculatePrice(manifestation.getPriceOfRegularTicket(), type);
-					tickets.put(id, new Ticket(id, manifestation, date, price, nameLastName, state, type));
+					tickets.put(id, new Ticket(id, manifestation, date, price, nameLastName, state, type, deleted));
 				}		
 			}
 		} catch (Exception ex) {
@@ -100,7 +101,9 @@ public class TicketDAO {
 			builder.append(t.getNameLastName() + ";");
 			builder.append(t.getState() + ";");
 			builder.append(t.getType() + ";");
-			builder.append(sdf.format(t.getDate()) + "\n");
+			builder.append(sdf.format(t.getDate()) + ";");
+			builder.append(t.isDeleted());
+			builder.append("\n");
 		}
 		try {
 			String separator = System.getProperty("file.separator");

@@ -32,6 +32,13 @@ Vue.component("manifestations", {
     },
   },
   methods: {
+    hideDeleted: function (data) {
+      let tmp = data.filter((m) => m.deleted == false);
+      if (tmp == undefined) {
+        tmp = [];
+      }
+      return tmp;
+    },
     editManifestation: function () {
       if (this.selectedManifestation.name == undefined) return;
       this.backup = [
@@ -86,7 +93,7 @@ Vue.component("manifestations", {
       axios
         .post("/TicketsSale/rest/tickets/", sendData)
         .then((response) => {
-          this.tickets = response.data;
+          this.tickets = this.hideDeleted(response.data);
         })
         .catch((err) => {
           console.log(err);

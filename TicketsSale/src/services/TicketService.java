@@ -85,6 +85,22 @@ public class TicketService {
 		}
 	}
 	
+	@POST
+	@Path("/delete/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void delUser(@Context HttpServletRequest request, String id) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		TicketDAO dao2 = (TicketDAO) ctx.getAttribute("TicketDAO");
+		
+		Ticket t = dao2.find(id);
+		t.setDeleted(true);
+
+		dao2.saveData(ctx.getRealPath(""));
+	}
+	
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -119,7 +135,7 @@ public class TicketService {
 				
 		for (int i = 0; i < dto.getQuantity(); i++) {
 			Ticket t = new Ticket(dao.getNextId(), dao2.find(dto.getManifestation()), new Date(), dto.getPrice()/dto.getQuantity(), 
-					loggedUser.getName()+" "+loggedUser.getLastName(), TicketState.RESERVED, totOfTicket);
+					loggedUser.getName()+" "+loggedUser.getLastName(), TicketState.RESERVED, totOfTicket, false);
 			
 			dao.addTicket(t);
 			loggedUser.getTickets().add(t);
