@@ -20,7 +20,7 @@ Vue.component("manifestations", {
     let user = JSON.parse(a);
 
     if (user.manifestations != undefined) {
-      this.manifestations = user.manifestations;
+      this.manifestations = this.hideDeleted(user.manifestations);
     } else {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
     }

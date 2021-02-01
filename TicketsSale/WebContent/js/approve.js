@@ -27,7 +27,7 @@ Vue.component("approve", {
     del: function (event, m) {
       event.target.disabled = true;
       axios
-        .post("/TicketsSale/rest/users/delete/", m.id, {
+        .post("/TicketsSale/rest/manifestations/delete/", m.name, {
           headers: {
             "Content-Type": "text/plain",
           },

@@ -11,11 +11,12 @@ public class Manifestation {
 	private ManifestationState state;
 	private Location location;
 	private String url;
+	private boolean isDeleted;
 	
 	public Manifestation() {}
 	
 	public Manifestation(String name, TypeOfManifestation type, int numberOfSeats, Date date,
-			double priceOfRegularTicket, ManifestationState state, Location location, String url) {
+			double priceOfRegularTicket, ManifestationState state, Location location, String url, boolean isDeleted) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -25,6 +26,15 @@ public class Manifestation {
 		this.state = state;
 		this.location = location;
 		this.url = url;
+		this.isDeleted = isDeleted;
+	}
+	
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	public String getName() {
