@@ -133,8 +133,9 @@ public class ManifestationDAO {
 					}
 					Location location = locationDAO.find(Integer.parseInt(st.nextToken().trim()));
 					String url = st.nextToken().trim();
+					boolean deleted = Boolean.parseBoolean(st.nextToken().trim());
 					manifestations.put(name, 
-					new Manifestation(name, type, numberOfSeats, date, priceOfRegularTickets, state, location, url));
+					new Manifestation(name, type, numberOfSeats, date, priceOfRegularTickets, state, location, url, deleted));
 				}		
 			}
 		} catch (Exception ex) {
@@ -161,7 +162,8 @@ public class ManifestationDAO {
 			builder.append(m.getPriceOfRegularTicket() + ";");
 			builder.append(m.getState() + ";");
 			builder.append(m.getLocation().getId() + ";");
-			builder.append(m.getUrl() + "\n");
+			builder.append(m.getUrl() + ";");
+			builder.append(m.isDeleted() + "\n");
 		}
 		try {
 			String separator = System.getProperty("file.separator");

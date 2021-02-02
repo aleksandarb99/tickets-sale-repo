@@ -25,8 +25,10 @@ import model.ManifestationDTO;
 import model.ManifestationState;
 import model.QueryParams;
 import model.Seller;
+import model.Ticket;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
+import dao.TicketDAO;
 import dao.UserDAO;
 
 @Path("/manifestations")
@@ -55,12 +57,29 @@ public class ManifestationService {
 		}
 	}
 	
+	@POST
+	@Path("/delete/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void delUser(@Context HttpServletRequest request, String name) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		ManifestationDAO dao2 = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		
+		Manifestation t = dao2.find(name);
+		t.setDeleted(true);
+
+		dao2.saveData(ctx.getRealPath(""));
+	}
+	
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getManifestations() {
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findAll();
+		return dao.findAll().stream()
+		.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
 	}
 	
 	@GET
@@ -76,7 +95,8 @@ public class ManifestationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getRecentManifestations() {
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findRecent();
+		return dao.findRecent().stream()
+				.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
 	}
 	
 	@GET
@@ -85,6 +105,10 @@ public class ManifestationService {
 	public Manifestation getManifestation(@PathParam("name") String name) {
 		
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		Manifestation m = dao.find(name);
+		if(m.isDeleted()) {
+			return null;
+		}
 		return dao.find(name);
 	}
 	
@@ -225,7 +249,8 @@ public class ManifestationService {
 			}
 		}
 		
-		return collection;
+		return collection.stream()
+				.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
 	}
 	
 	private boolean validateParams(QueryParams params) {

@@ -112,7 +112,7 @@ Vue.component("show-card", {
     if (a != null) {
       let user = JSON.parse(a);
 
-      if (Object.keys(user).length == 10) {
+      if (Object.keys(user).length == 11) {
         this.type = user.type;
 
         axios

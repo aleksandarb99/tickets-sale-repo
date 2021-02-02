@@ -10,7 +10,7 @@ Vue.component("addSeller", {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }
-    if (Object.keys(JSON.parse(loggedUser)).length != 6) {
+    if (Object.keys(JSON.parse(loggedUser)).length != 7) {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
       return;
     }

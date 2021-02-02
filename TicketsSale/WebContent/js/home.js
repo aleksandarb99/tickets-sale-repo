@@ -108,8 +108,8 @@ Vue.component("home", {
         .post("/TicketsSale/rest/manifestations", this.queryParams)
         .then((response) => {
           this.manifestations = response.data;
-          this.saveBackup();
           this.updateView();
+          this.saveBackup();
         })
         .catch((err) => {
           console.log(err);

@@ -1,5 +1,39 @@
 Vue.component("tickets", {
   methods: {
+    hideDeleted: function (data) {
+      if (this.userType == "ADMIN") {
+        return data;
+      }
+      let tmp = data.filter((m) => m.deleted == false);
+      if (tmp == undefined) {
+        tmp = [];
+      }
+      return tmp;
+    },
+    del: function (event, t) {
+      event.target.disabled = true;
+      axios
+        .post("/TicketsSale/rest/tickets/delete/", t.id, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .then((response) => {
+          t.deleted = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    checkIfDeleted: function (t) {
+      if (t.deleted != undefined) {
+        if (t.deleted) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
     cancel: function (event, ticket) {
       for (const t of this.tickets) {
         if (t.id == ticket.id) {
@@ -38,7 +72,7 @@ Vue.component("tickets", {
       let a = localStorage.getItem("user");
       let user = JSON.parse(a);
 
-      if (Object.keys(user).length == 6) {
+      if (Object.keys(user).length == 7) {
         return false;
       }
 
@@ -138,7 +172,9 @@ Vue.component("tickets", {
     },
     updateView: function () {
       let data = this.searchFirst();
-      this.shownTickets = this.filterState(this.filterType(this.sort(data)));
+      this.shownTickets = this.hideDeleted(
+        this.filterState(this.filterType(this.sort(data)))
+      );
     },
     searchFirst: function () {
       let tmp = this.tickets;
@@ -173,6 +209,7 @@ Vue.component("tickets", {
   },
   data: function () {
     return {
+      userType: null,
       shownTickets: null,
       tickets: null,
       sorter: "1",
@@ -195,19 +232,23 @@ Vue.component("tickets", {
     }
     let user = JSON.parse(a);
 
-    if (Object.keys(user).length == 6) {
+    if (Object.keys(user).length == 7) {
+      this.userType = "ADMIN";
       axios
         .get("/TicketsSale/rest/tickets")
         .then((response) => {
           this.tickets = response.data;
           this.shownTickets = response.data;
+          this.updateView();
         })
         .catch((err) => {
           console.log(err);
         });
     } else if (user.tickets != undefined) {
+      this.userType = "CUSTOMER";
       this.tickets = user.tickets;
       this.shownTickets = user.tickets;
+      this.updateView();
     } else {
       window.location.href = "http://127.0.0.1:9001/TicketsSale/index.html#/";
     }
@@ -324,7 +365,8 @@ Vue.component("tickets", {
                     <th scope="col">Customer</th>
                     <th scope="col">State</th>
                     <th scope="col">Type</th>
-                    <th scope="col">Action</th>
+                    <th v-if="userType=='CUSTOMER'" scope="col">Action</th>
+                    <th v-if="userType=='ADMIN'" scope="col">Logical Delete</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -337,7 +379,8 @@ Vue.component("tickets", {
                     <td>{{t.nameLastName}}</td>
                     <td>{{t.state}}</td>
                     <td>{{t.type}}</td>
-                    <td><button v-if="checkForDisabled(t)" @click="cancel($event,t)" type="button" class="btn btn-secondary btn-sm">Cancel</button></td>
+                    <td v-if="userType=='CUSTOMER'"><button v-if="checkForDisabled(t)" @click="cancel($event,t)" type="button" class="btn btn-secondary btn-sm">Cancel</button></td>
+                    <td v-if="userType=='ADMIN'"><button v-if="checkIfDeleted(t)" @click="del($event,t)" type="button" class="btn btn-secondary btn-sm">Delete</button></td>
                   </tr>
                 </tbody>
               </table>
