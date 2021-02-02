@@ -9,12 +9,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import model.Comment;
+import model.CommentParams;
 import model.CommentState;
 import model.Customer;
 import model.Manifestation;
-
 
 public class CommentDAO {
 	private Map<Integer, Comment> comments = new HashMap<>();	
@@ -31,6 +32,30 @@ public class CommentDAO {
 	
 	public Collection<Comment> findAll() {
 		return comments.values();
+	}
+	
+	public Collection<Comment> findAllActive(String manifestationName) {
+		Collection<Comment> collection = comments.values().stream()
+				.filter(c -> c.getState().equals(CommentState.APPROVED) && c.getManifestation().getName().equals(manifestationName)).collect(Collectors.toList());
+		return collection;
+	}
+	
+	public boolean approveComment(String commentId) {
+		Comment updatingComment = find(Integer.parseInt(commentId));
+		if(updatingComment.getState().equals(CommentState.IN_PROGRESS)) {
+			updatingComment.setState(CommentState.APPROVED);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean rejectComment(String commentId) {
+		Comment updatingComment = find(Integer.parseInt(commentId));
+		if(updatingComment.getState().equals(CommentState.IN_PROGRESS)) {
+			updatingComment.setState(CommentState.REJECTED);
+			return true;
+		}
+		return false;
 	}
 	
 	public Comment addComment(Comment comment) {
@@ -95,5 +120,10 @@ public class CommentDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void createComment(CommentParams cp, Manifestation manifestation, Customer customer) {		
+		Comment comment = new Comment(0, customer, manifestation, cp.getText(), cp.getGrade(), CommentState.IN_PROGRESS);
+		addComment(comment);
 	}
 }

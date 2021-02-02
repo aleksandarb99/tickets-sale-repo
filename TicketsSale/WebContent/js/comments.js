@@ -35,31 +35,6 @@ Vue.component("comments", {
           console.log(err);
         });
     },
-    /*approveManifestation: function (manifestation) {
-      this.chosenManifestation = manifestation;
-      let sendData = {
-        name: manifestation.name,
-        type: manifestation.type,
-        date: manifestation.date,
-        state: manifestation.state,
-        url: manifestation.url,
-        priceOfRegularTicket: manifestation.priceOfRegularTicket,
-        numberOfSeats: manifestation.numberOfSeats,
-        location: manifestation.location,
-      };
-      axios
-        .post("/TicketsSale/rest/manifestations/approve", sendData)
-        .then((response) => {
-          if (response.data != null) {
-            this.getInactiveManifestations();
-          } else {
-            alert("Manifestacija je mozda vec izmenja!");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },*/
   },
   template: ` 
             <div style="min-height:90vh;" class="container">

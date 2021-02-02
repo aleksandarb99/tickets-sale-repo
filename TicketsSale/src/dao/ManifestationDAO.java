@@ -45,6 +45,15 @@ public class ManifestationDAO {
 		return collection;
 	}
 	
+	public boolean checkDate(String name) {
+		Manifestation man = find(name);
+		if(man == null) return true;
+		
+		if(man.getDate().after(new Date())) return true;
+		
+		return false;
+	}
+	
 	public boolean disableManifestation(Manifestation manifestation) {
 		Manifestation updatingManifestation = find(manifestation.getName());
 		if(updatingManifestation.getState().equals(ManifestationState.INACTIVE)) {

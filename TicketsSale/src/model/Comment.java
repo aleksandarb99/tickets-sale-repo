@@ -8,6 +8,8 @@ public class Comment {
 	private int grade; //from 1 to 5
 	private CommentState state;
 	
+	public Comment() {}
+	
 	public Comment(int id, Customer customer, Manifestation manifestation, String text, int grade, CommentState state) {
 		super();
 		this.id = id;
