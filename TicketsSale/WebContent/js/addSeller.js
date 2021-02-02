@@ -1,7 +1,7 @@
 Vue.component("addSeller", {
   data: function () {
     return {
-      user: { gender: "CHOOSE" },
+      user: { gender: "CHOOSE", isBlocked: false },
     };
   },
   mounted: function () {

@@ -1,5 +1,30 @@
 Vue.component("users", {
   methods: {
+    checkIfBlocked: function (user) {
+      if (user.blocked != undefined) {
+        if (user.blocked) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    block: function (e, user) {
+      e.target.disabled = true;
+
+      axios
+        .post("/TicketsSale/rest/users/block/", user.username, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .then((response) => {
+          user.blocked = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     filterType: function (data) {
       let tmp;
       //all
@@ -103,7 +128,6 @@ Vue.component("users", {
       .get("/TicketsSale/rest/users/customers/")
       .then((response) => {
         let customers = response.data;
-        console.log(customers);
         for (const element of customers) {
           element.role = "Customer";
           element.points = element.collectedPoints;
@@ -120,7 +144,6 @@ Vue.component("users", {
       .get("/TicketsSale/rest/users/sellers/")
       .then((response) => {
         let sellers = response.data;
-        console.log(sellers);
         for (const element of sellers) {
           element.role = "Seller";
           element.points = 0;
@@ -137,7 +160,6 @@ Vue.component("users", {
       .get("/TicketsSale/rest/users/administrators/")
       .then((response) => {
         let admins = response.data;
-        console.log(admins);
         for (const element of admins) {
           element.role = "Administrator";
           element.points = 0;
@@ -244,6 +266,7 @@ Vue.component("users", {
                 <th scope="col">Date of birth</th>
                 <th scope="col">Role</th>
                 <th scope="col">Collected Points</th>
+                <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,6 +279,7 @@ Vue.component("users", {
                   <td>{{user.dateOfBirth | dateFormat('DD.MM.YYYY')}}</td>
                   <td>{{user.role}}</td>
                   <td>{{user.points}}</td>
+                  <td><button v-if="checkIfBlocked(user)" @click="block($event,user)" type="button" class="btn btn-secondary btn-sm">Block</button></td>
                 </tr>
               </tbody>
             </table>

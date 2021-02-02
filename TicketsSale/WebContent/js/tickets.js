@@ -35,6 +35,13 @@ Vue.component("tickets", {
         });
     },
     checkForDisabled: function (ticket) {
+      let a = localStorage.getItem("user");
+      let user = JSON.parse(a);
+
+      if (Object.keys(user).length == 6) {
+        return false;
+      }
+
       if (ticket.state == "CANCELED") {
         return false;
       }

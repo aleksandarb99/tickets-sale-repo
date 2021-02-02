@@ -3,6 +3,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -20,6 +21,7 @@ import model.Customer;
 import model.Manifestation;
 import model.Seller;
 import model.Ticket;
+import model.TicketState;
 import model.TypeOfCustomer;
 import model.TypesOfCustomers;
 import model.User;
@@ -65,6 +67,35 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("UserDAO", new UserDAO(contextPath, ticketDAO, manifestationDAO));
 		}
+	}
+	
+	@GET
+	@Path("/susUsers/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Customer> getSusUsers() {	
+		Collection<Customer> users = getCustomers();
+		Collection<Customer> retVal = new ArrayList<Customer>();
+		
+		for (Customer customer : users) {
+			int counter = 0;
+			for (Ticket ticket : customer.getTickets()) {
+				Date current = new Date();
+				if(ticket.getState().equals(TicketState.CANCELED)) {
+					long diff = current.getTime() - ticket.getDate().getTime();
+					int days = (int) (diff / 1000 / 60 / 60 / 24);
+					
+			        if(days <= 30) {
+			        	counter++;
+			        }
+				}
+			}
+			
+			if(counter > 5) {
+				retVal.add(customer);
+			}
+		}
+		
+		return retVal;
 	}
 	
 	@GET
@@ -235,8 +266,56 @@ public class UserService {
 		User loggedUser = dao.find(params[0]);
 		if(loggedUser == null) return null;
 		if(!loggedUser.getPassword().equals(params[1])) return null;
+		
+		// Ako je kupac ili prodavac proveri da li je blokiran
+		try {
+			Customer c = (Customer) loggedUser;
+			if(c.isBlocked()) {
+				return null;
+			}
+		} catch (Exception e) {
+			
+		}
+		try {
+			Seller s = (Seller) loggedUser;
+			if(s.isBlocked()) {
+				return null;
+			}
+		} catch (Exception e) {	
+		}
+		
 		request.getSession().setAttribute("user", loggedUser);
 		return loggedUser;
+	}
+	
+	@POST
+	@Path("/block/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void blockUser(@Context HttpServletRequest request, String username) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		UserDAO dao2 = (UserDAO) ctx.getAttribute("UserDAO");
+		
+		Administrator a;
+		try {
+			a = (Administrator) request.getSession().getAttribute("user");
+		} catch (Exception e) {
+			return;
+		}
+		
+		try {
+			Customer user = (Customer)dao2.find(username);
+			user.setBlocked(true);
+		} catch (Exception e) {
+		}
+		try {
+			Seller user = (Seller)dao2.find(username);
+			user.setBlocked(true);
+		} catch (Exception e) {
+		}
+		dao2.saveData(ctx.getRealPath(""));
 	}
 	
 	@GET
