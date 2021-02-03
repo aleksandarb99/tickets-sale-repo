@@ -74,6 +74,14 @@ public class ManifestationService {
 	}
 	
 	@GET
+	@Path("/all/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getAllManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAll();
+	}
+	
+	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getManifestations() {

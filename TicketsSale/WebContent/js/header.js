@@ -49,7 +49,7 @@ Vue.component("our-header", {
         <li v-if="Object.keys(user).length == 7" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/approve">Approve manifestations</a>
         </li>
-        <li v-if="Object.keys(user).length == 9" class="nav-item active">
+        <li v-if="Object.keys(user).length == 9 || Object.keys(user).length == 7" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/manifestations">Review manifestations</a>
         </li>
         <li v-if="Object.keys(user).length == 7 || Object.keys(user).length == 9" class="nav-item active">
