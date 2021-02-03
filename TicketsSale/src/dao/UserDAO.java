@@ -57,6 +57,19 @@ public class UserDAO {
 	public Collection<User> findAll() {
 		return users.values();
 	}
+	
+	public User updateUser(String username, User user) {
+		User updatingUser = users.get(username);
+		users.remove(username);
+		updatingUser.setUsername(user.getUsername());
+		updatingUser.setPassword(user.getPassword());
+		updatingUser.setName(user.getName());
+		updatingUser.setLastName(user.getLastName());
+		updatingUser.setDateOfBirth(user.getDateOfBirth());
+		users.put(updatingUser.getUsername(), updatingUser);
+		
+		return updatingUser;
+	}
 
 	private void loadData(String contextPath, TicketDAO dao, ManifestationDAO manDao) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.");

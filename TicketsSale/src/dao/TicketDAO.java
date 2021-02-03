@@ -66,6 +66,17 @@ public class TicketDAO {
 		}
 		return size;
 	}
+	
+	public Ticket addTicket(Ticket ticket) {
+		tickets.put(ticket.getId(), ticket);
+		return ticket;
+	}
+	
+	private Double calculatePrice(Double regular, TypeOfTicket type) {
+		if(type.equals(TypeOfTicket.VIP)) return regular * 4;
+		if(type.equals(TypeOfTicket.FAN_PIT)) return regular * 2;
+		return regular;
+	}
 
 	private void loadData(String contextPath, ManifestationDAO dao) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");

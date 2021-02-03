@@ -125,9 +125,18 @@ Vue.component("manifestations", {
             return;
           }
           alert("Success!");
+          this.saveChanges();
           this.restartData();
-          window.location.href =
-            "http://127.0.0.1:9001/TicketsSale/index.html#/";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    saveChanges: function () {
+      axios
+        .get("/TicketsSale/rest/users/seller/")
+        .then((response) => {
+          localStorage.setItem("user", JSON.stringify(response.data));
         })
         .catch((err) => {
           console.log(err);

@@ -56,11 +56,22 @@ public class UserService {
 		dao.saveData(ctx.getRealPath(""));
 		return addedCustomer;
 	}
-
+	
+	@GET
+	@Path("/seller/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Seller getSeller(@Context HttpServletRequest request) {
+		if(request.getSession().getAttribute("user") == null) {	
+			return null;
+		}
+		Seller loggedUser = (Seller)request.getSession().getAttribute("user");
+		
+		return loggedUser;
+	}
+	
 	@POST
 	@Path("/addPoints/")
 	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
 	public void addPoints(@Context HttpServletRequest request, String dto) {
 		double numberOfPoints = Double.parseDouble(dto);
 		if (request.getSession().getAttribute("user") == null) {

@@ -16,6 +16,7 @@ import model.CommentParams;
 import model.CommentState;
 import model.Customer;
 import model.Manifestation;
+import model.Ticket;
 
 public class CommentDAO {
 	private Map<Integer, Comment> comments = new HashMap<>();
@@ -64,7 +65,7 @@ public class CommentDAO {
 				.collect(Collectors.toList());
 		return collection;
 	}
-
+	
 	private void loadData(String contextPath, ManifestationDAO dao, UserDAO userDao) {
 		BufferedReader in = null;
 		try {

@@ -27,6 +27,12 @@ import model.ManifestationDTO;
 import model.ManifestationState;
 import model.QueryParams;
 import model.Seller;
+import model.Ticket;
+import dao.CommentDAO;
+import dao.LocationDAO;
+import dao.ManifestationDAO;
+import dao.TicketDAO;
+import dao.UserDAO;
 
 @Path("/manifestations")
 public class ManifestationService {
@@ -35,6 +41,60 @@ public class ManifestationService {
 	ServletContext ctx;
 
 	public ManifestationService() {
+	}
+	
+	@PostConstruct
+	public void init() {
+		LocationDAO locationDAO = null;
+		TicketDAO ticketDAO = null;
+		ManifestationDAO manifestationDAO = null;
+		UserDAO userDAO = null;
+		if (ctx.getAttribute("LocationDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");    	
+	    	locationDAO = new LocationDAO(contextPath);
+			ctx.setAttribute("LocationDAO", locationDAO);
+		} else {
+			locationDAO = (LocationDAO) ctx.getAttribute("LocationDAO");
+		}
+		if (ctx.getAttribute("ManifestationDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	manifestationDAO = new ManifestationDAO(contextPath, locationDAO);
+			ctx.setAttribute("ManifestationDAO", manifestationDAO);
+		} else {
+			manifestationDAO = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		}
+		if (ctx.getAttribute("TicketDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
+			ctx.setAttribute("TicketDAO", ticketDAO);
+		} else {
+			ticketDAO = (TicketDAO) ctx.getAttribute("TicketDAO");
+		}
+		if (ctx.getAttribute("UserDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	userDAO = new UserDAO(contextPath, ticketDAO, manifestationDAO);
+			ctx.setAttribute("UserDAO", userDAO);
+		} else {
+			userDAO = (UserDAO) ctx.getAttribute("UserDAO");
+		}
+		if (ctx.getAttribute("CommentDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("CommentDAO", new CommentDAO(contextPath, manifestationDAO, userDAO));
+		}
+	}
+	
+	@POST
+	@Path("/delete/")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void delUser(@Context HttpServletRequest request, String name) {	
+		if(request.getSession().getAttribute("user") == null) {	
+			return;
+		}
+		ManifestationDAO dao2 = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		
+		Manifestation t = dao2.find(name);
+		t.setDeleted(true);
 	}
 
 	@POST
@@ -130,6 +190,31 @@ public class ManifestationService {
 		Manifestation m = dao.find(name);
 		if (m.isDeleted()) {
 			return null;
+		UserDAO daoUser = (UserDAO) ctx.getAttribute("UserDAO");
+		TicketDAO daoT = (TicketDAO) ctx.getAttribute("TicketDAO");
+		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
+		CommentDAO daoComment = (CommentDAO) ctx.getAttribute("CommentDAO");
+		Manifestation oldManifestation = dao.find(dto.getOldName());
+		
+		if(!dao.checkDateAndLocation(dto.getManifestation())) return null;
+		
+		if(dao.find(dto.getManifestation().getName()) != null && dto.getOldName().equals(dto.getManifestation().getName())) {
+			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoUser.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
+			daoT.saveData(ctx.getRealPath(""));
+			daoLocation.saveData(ctx.getRealPath(""));
+			dao.saveData(ctx.getRealPath(""));
+			return retM;
+		}
+		if(dao.find(dto.getManifestation().getName()) == null) {
+			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoUser.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
+			daoT.saveData(ctx.getRealPath(""));
+			daoLocation.saveData(ctx.getRealPath(""));
+			dao.saveData(ctx.getRealPath(""));
+			return retM;
 		}
 		return dao.find(name);
 	}
