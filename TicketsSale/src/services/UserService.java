@@ -62,6 +62,8 @@ public class UserService {
 	    	String contextPath = ctx.getRealPath("");
 	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
 			ctx.setAttribute("TicketDAO", ticketDAO);
+		} else {
+			ticketDAO = (TicketDAO) ctx.getAttribute("TicketDAO");
 		}
 		if (ctx.getAttribute("UserDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");

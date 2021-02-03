@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import model.Manifestation;
 import model.Seller;
 import model.Ticket;
+import model.TicketState;
 import model.TypeOfCustomer;
 import model.TypesOfCustomers;
 import model.User;
@@ -45,6 +46,16 @@ public class UserDAO {
 	public User addUser(User user) {
 		users.put(user.getUsername(), user);
 		return user;
+	}
+	
+	public boolean checkTicket(String manifestationName, Customer customer) {
+		for(Ticket t: customer.getTickets()) {
+			if(t.getReservedManifestation().getName().equals(manifestationName)
+			&& t.getState().equals(TicketState.RESERVED)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public User updateUser(String username, User user) {

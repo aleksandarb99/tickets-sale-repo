@@ -2,6 +2,10 @@ Vue.component("show-card", {
   name: "show-card",
   data: function () {
     return {
+      text: null,
+      grade: null,
+      commentIsAllowed: false,
+      comments: null,
       mapIsSettled: false,
       manifestation: {
         name: null,
@@ -36,8 +40,24 @@ Vue.component("show-card", {
 
       localStorage.setItem("backupData", JSON.stringify(data));
     },
-    line: function () {
-      return "a";
+    sendComment: function () {
+      if (this.text == null || this.grade == null) {
+        alert("Failed");
+        return;
+      }
+      let sendData = {
+        manifestationName: this.manifestation.name,
+        text: this.text,
+        grade: this.grade,
+      };
+      axios
+        .post("/TicketsSale/rest/comments/", sendData)
+        .then((response) => {
+          alert("Success!");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     addDiscountPoints: function () {
       let points = (this.order.price / 1000) * 133;
@@ -102,13 +122,44 @@ Vue.component("show-card", {
     },
   },
   mounted: function () {
+    let a = localStorage.getItem("user");
     axios
       .get("/TicketsSale/rest/manifestations/".concat(this.$route.params.name))
       .then((response) => {
         this.manifestation = response.data;
+        axios
+          .post("/TicketsSale/rest/comments/active", this.manifestation.name, {
+            headers: {
+              "Content-Type": "text/plain",
+            },
+          })
+          .then((response) => {
+            this.comments = response.data;
+          });
+        if (a == null) return;
+        let user = JSON.parse(a);
+        if (Object.keys(user).length == 9) {
+          axios
+            .post(
+              "/TicketsSale/rest/comments/allowCommenting",
+              this.manifestation.name,
+              {
+                headers: {
+                  "Content-Type": "text/plain",
+                },
+              }
+            )
+            .then((response) => {
+              if (response.data != "") {
+                this.commentIsAllowed = true;
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       });
 
-    let a = localStorage.getItem("user");
     if (a != null) {
       let user = JSON.parse(a);
 
@@ -231,6 +282,45 @@ Vue.component("show-card", {
         </div>
         <div class="row">
           <div style="width:50%;height:400px;" class="col-md-6" id="map">
+          </div>
+        </div>
+        <div v-if="comments != null && comments != undefined && Object.keys(comments).length != 0" class="row">
+          <p style="margin:auto;margin-top:30px;margin-bottom:30px;" class="col-md-8">Comments:</p>
+          <div style="margin:auto;" class="col-md-8">
+            <comment v-for="c in comments" :username="c.customer.username" :text="c.text" :grade="c.grade"></comment>
+          </div>
+        </div>
+        <div v-else class="alert alert-info" role="alert">
+          There's no comments yet!
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button v-if="commentIsAllowed" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleComment">Add comment</button>
+            <div class="modal fade" id="exampleComment" tabindex="-1" aria-labelledby="exampleCommentLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleCommentLabel">Adding comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <input v-model="text" type="text" placeholder="Your comment..." />
+                    <select v-model="grade" aria-label="Type" aria-describedby="inputGroup-sizing-lg">
+                      <option selected value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                    <p v-if="grade == null || text == null" class="comment-warning">Your comment is not filled!</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button @click="sendComment" type="button" data-bs-dismiss="modal" class="btn btn-primary">Post it</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

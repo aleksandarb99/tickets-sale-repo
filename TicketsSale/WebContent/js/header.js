@@ -52,6 +52,12 @@ Vue.component("our-header", {
         <li v-if="Object.keys(user).length == 9" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/manifestations">Review manifestations</a>
         </li>
+        <li v-if="Object.keys(user).length == 7 || Object.keys(user).length == 9" class="nav-item active">
+          <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/comments">Review comments</a>
+        </li>
+        <li v-if="Object.keys(user).length == 9" class="nav-item active">
+          <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/rejectApproveComments">Approve comments</a>
+        </li>
         <li v-if="Object.keys(user).length == 11 || Object.keys(user).length == 7" class="nav-item active">
           <a class="btn btn-outline-light" href="http://127.0.0.1:9001/TicketsSale/#/tickets">Tickets review</a>
         </li>
