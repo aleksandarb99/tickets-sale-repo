@@ -138,7 +138,7 @@ Vue.component("show-card", {
           });
         if (a == null) return;
         let user = JSON.parse(a);
-        if (Object.keys(user).length == 9) {
+        if (Object.keys(user).length == 11) {
           axios
             .post(
               "/TicketsSale/rest/comments/allowCommenting",

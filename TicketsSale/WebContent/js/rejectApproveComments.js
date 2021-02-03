@@ -11,7 +11,7 @@ Vue.component("rejectApproveComments", {
       return;
     }
     let size = Object.keys(JSON.parse(loggedUser)).length;
-    if (size == 6 || size == 7) {
+    if (size == 7 || size == 9) {
       //Ako je admin ili prodavac
       this.getComments();
       return;
