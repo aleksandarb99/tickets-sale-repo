@@ -149,22 +149,6 @@ public class ManifestationService {
 		return null;
 	}
 
-	@POST
-	@Path("/delete/")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-	public void delUser(@Context HttpServletRequest request, String name) {
-		if (request.getSession().getAttribute("user") == null) {
-			return;
-		}
-		ManifestationDAO dao2 = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-
-		Manifestation t = dao2.find(name);
-		t.setDeleted(true);
-
-		dao2.saveData(ctx.getRealPath(""));
-	}
-
 	@GET
 	@Path("/all/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -184,7 +168,7 @@ public class ManifestationService {
 	@GET
 	@Path("/{name: .+}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Manifestation getManifestation(@PathParam("name") String name) {
+	public Manifestation getManifestation(@PathParam("name") String name, ManifestationDTO dto) {
 
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		Manifestation m = dao.find(name);
@@ -293,23 +277,6 @@ public class ManifestationService {
 		}
 
 		return collection.stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
-	}
-
-	@PostConstruct
-	public void init() {
-		LocationDAO locationDAO;
-		if (ctx.getAttribute("LocationDAO") == null) {
-			String contextPath = ctx.getRealPath("");
-			locationDAO = new LocationDAO(contextPath);
-			ctx.setAttribute("LocationDAO", locationDAO);
-		} else {
-			locationDAO = (LocationDAO) ctx.getAttribute("LocationDAO");
-		}
-
-		if (ctx.getAttribute("ManifestationDAO") == null) {
-			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("ManifestationDAO", new ManifestationDAO(contextPath, locationDAO));
-		}
 	}
 
 	@POST
