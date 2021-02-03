@@ -118,6 +118,18 @@ public class UserService {
 	}
 	
 	@GET
+	@Path("/seller/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Seller getSeller(@Context HttpServletRequest request) {
+		if(request.getSession().getAttribute("user") == null) {	
+			return null;
+		}
+		Seller loggedUser = (Seller)request.getSession().getAttribute("user");
+		
+		return loggedUser;
+	}
+	
+	@GET
 	@Path("/sellers/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Seller> getSellers() {

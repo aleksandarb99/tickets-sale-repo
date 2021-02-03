@@ -16,6 +16,7 @@ import model.CommentParams;
 import model.CommentState;
 import model.Customer;
 import model.Manifestation;
+import model.Ticket;
 
 public class CommentDAO {
 	private Map<Integer, Comment> comments = new HashMap<>();	
@@ -63,6 +64,14 @@ public class CommentDAO {
 		comment.setId(newId);
 		comments.put(newId, comment);
 		return comment;
+	}
+	
+	public void updateComment(Manifestation oldManifestation, Manifestation newManifestation) {
+		for(Comment c: comments.values()) {
+			if(c.getManifestation().getName().equals(oldManifestation.getName())) {
+				c.setManifestation(newManifestation);
+			}
+		}
 	}
 	
 	private void loadData(String contextPath, ManifestationDAO dao, UserDAO userDao) {

@@ -47,6 +47,14 @@ public class TicketDAO {
 		return ticket;
 	}
 	
+	public void updateTicket(Manifestation oldManifestation, Manifestation newManifestation) {
+		for(Ticket t: tickets.values()) {
+			if(t.getReservedManifestation().getName().equals(oldManifestation.getName())) {
+				t.setReservedManifestation(newManifestation);
+			}
+		}
+	}
+	
 	private Double calculatePrice(Double regular, TypeOfTicket type) {
 		if(type.equals(TypeOfTicket.VIP)) return regular * 4;
 		if(type.equals(TypeOfTicket.FAN_PIT)) return regular * 2;

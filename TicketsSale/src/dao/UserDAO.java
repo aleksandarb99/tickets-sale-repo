@@ -58,6 +58,19 @@ public class UserDAO {
 		return true;
 	}
 	
+	public void updateUser(Manifestation oldManifestation, Manifestation newManifestation) {
+		for(User u: users.values()) {
+			if(u instanceof Customer) {
+				Customer c = (Customer) u;
+				for(Ticket t: c.getTickets()) {
+					if(t.getReservedManifestation().getName().equals(oldManifestation.getName())) {
+						t.setReservedManifestation(newManifestation);
+					}
+				}
+			}
+		}
+	}
+	
 	public User updateUser(String username, User user) {
 		User updatingUser = users.get(username);
 		users.remove(username);
