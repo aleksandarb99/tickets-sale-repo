@@ -71,6 +71,7 @@ public class UserDAO {
 			StringTokenizer st;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
+				System.out.println(line);
 				if (line.equals("") || line.indexOf('#') == 0)
 					continue;
 				st = new StringTokenizer(line, ";");
