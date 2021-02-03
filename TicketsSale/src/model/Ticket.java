@@ -11,9 +11,10 @@ public class Ticket {
 	private String nameLastName;
 	private TicketState state;
 	private TypeOfTicket type;
+	private boolean isDeleted;
 	
 	public Ticket(String id, Manifestation reservedManifestation, Date date, double price, String nameLastName,
-			TicketState state, TypeOfTicket type) {
+			TicketState state, TypeOfTicket type, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.reservedManifestation = reservedManifestation;
@@ -22,6 +23,15 @@ public class Ticket {
 		this.nameLastName = nameLastName;
 		this.state = state;
 		this.type = type;
+		this.isDeleted = isDeleted;
+	}
+	
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	public String getId() {
@@ -79,4 +89,12 @@ public class Ticket {
 	public void setType(TypeOfTicket type) {
 		this.type = type;
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", reservedManifestation=" + reservedManifestation + ", date=" + date + ", price="
+				+ price + ", nameLastName=" + nameLastName + ", state=" + state + ", type=" + type + "]";
+	}
+	
+	
 }

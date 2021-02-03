@@ -6,6 +6,10 @@
   user-select: none;
 }
 
+.selected {
+  background-color: greenyellow;
+}
+
 a {
   color: black;
 }
@@ -29,5 +33,113 @@ a:active {
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
+  }
+}
+
+.spread-it {
+  height: 100%;
+  margin: 0;
+}
+
+.has-row {
+  height: 15vh;
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+}
+
+.del-padding {
+  padding: 0;
+}
+
+.del-margins {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  width: inherit;
+}
+
+.form-row {
+  height: 4vh;
+}
+
+.wrapper {
+  padding: 1em;
+}
+
+/* zumiranje carte */
+.zoom {
+  transition: transform 0.2s; /* Animation */
+}
+
+.zoom:hover {
+  transform: scale(1.1);
+}
+
+input[type="date"]::before {
+  padding: 0;
+  content: attr(data-placeholder);
+  width: 100%;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+  padding: 0;
+  display: none;
+}
+
+input[type="date"] {
+  width: 100%;
+  padding: 0;
+}
+
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+  margin-bottom: 4rem;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  bottom: 3rem;
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel-item {
+  height: 32rem;
+}
+.carousel-item > img {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  min-width: 80%;
+  height: 32rem;
+}
+
+.cover-image-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  clear: float;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+
+@media screen and (max-width: 767px) {
+  .has-row {
+    height: 35vh;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .has-row {
+    height: 40vh;
+    padding-top: 3vh;
+    padding-bottom: 3vh;
   }
 }

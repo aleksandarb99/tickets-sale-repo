@@ -9,8 +9,11 @@ public abstract class User {
 	private String lastName;
 	private Gender gender;
 	private Date dateOfBirth;
+	private boolean isDeleted;
 	
-	public User(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth) {
+	public User() {}
+	
+	public User(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth, boolean isDeleted) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -18,6 +21,7 @@ public abstract class User {
 		this.lastName = lastName;
 		this.gender = gender;
 		this.dateOfBirth = dateOfBirth;
+		this.isDeleted = isDeleted;
 	}
 
 	public String getUsername() {
@@ -67,4 +71,21 @@ public abstract class User {
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	@Override
+	public String toString() {
+		return "User [username=" + username + ", password=" + password + ", name=" + name + ", lastName=" + lastName
+				+ ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", isDeleted=" + isDeleted + "]";
+	}
+	
+	
+	
 }

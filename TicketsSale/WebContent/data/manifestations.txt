@@ -1,3 +1,9 @@
-#Naziv;tip;Broj mesta;Datum i vreme odrzavanja;cena regular karte;status;lokacija;poster manifestacije
-ARA MALIKIAN;CONCERT;350;18.02.2021. 19:00;800;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/001/387/ara-malikian-474-279-13499.jpg
-Antivirus;THEATER;500;13.02.2021. 19:00;1000;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/002/457/darko-mitrovic-antivirus-474-279-14058.png
+IVAN BOSILJIC - NASE VECE;THEATER;250;28.01.2021. 18:00;650.0;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/002/456/ivan-bosiljcic-nase-vece-474-279-14054.jpg;false
+GUITAR ART FESTIVAL XXI;FESTIVAL;250;28.01.2021. 14:00;1000.0;INACTIVE;2;https://pb2eu.interticket.com/imgs/system-20/program/000/001/728/xxi-guitar-art-festival-40-fingers-474-279-13768.jpg;false
+ZDRAVKO COLIC;CONCERT;1000;22.01.2021. 11:00;1000.0;INACTIVE;4;https://pb2eu.interticket.com/imgs/system-20/program/000/002/070/zdravko-colic-474-279-13191.jpg;true
+BAAL;THEATER;50;13.02.2021. 17:30;500.0;ACTIVE;5;https://pb2eu.interticket.com/imgs/system-20/program/000/002/444/baal-474-279-14030.jpg;false
+NEGATIVE;CONCERT;204;11.01.2021. 01:27;1600.0;INACTIVE;5;https://pb2eu.interticket.com/imgs/system-20/program/000/002/459/negative-474-279-14065.jpg;false
+ARA MALIKIAN;CONCERT;350;18.01.2021. 19:00;800.0;INACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/001/387/ara-malikian-474-279-13499.jpg;false
+ANTIVIRUS;THEATER;500;13.02.2021. 19:00;1000.0;ACTIVE;2;https://pb2eu.interticket.com/imgs/system-20/program/000/002/457/darko-mitrovic-antivirus-474-279-14058.png;false
+STA ME SNADJE;THEATER;200;28.02.2021. 15:00;700.0;ACTIVE;3;https://pb2eu.interticket.com/imgs/system-20/program/000/000/474/sta-me-snadje-474-279-4694.jpg;false
+WARDRUNA;CONCERT;1000;15.01.2021. 19:00;1000.0;INACTIVE;3;https://pb2eu.interticket.com/imgs/system-20/program/000/001/109/wardruna-474-279-13198.jpg;false

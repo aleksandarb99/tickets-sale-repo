@@ -8,13 +8,27 @@ public class Customer extends User {
 	private List<Ticket> tickets;
 	private double collectedPoints;
 	private TypeOfCustomer type;
+	private boolean isBlocked;
+	
+	public Customer() {}
 	
 	public Customer(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth,
-			 double collectedPoints, TypeOfCustomer type) {
-		super(username, password, name, lastName, gender, dateOfBirth);
+			 double collectedPoints, TypeOfCustomer type, boolean isBlocked, boolean isDeleted) {
+		super(username, password, name, lastName, gender, dateOfBirth, isDeleted);
 		this.tickets = new ArrayList<Ticket>();
 		this.collectedPoints = collectedPoints;
 		this.type = type;
+		this.isBlocked = isBlocked;
+	}
+	
+	
+
+	public boolean isBlocked() {
+		return isBlocked;
+	}
+
+	public void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
 	}
 
 	public List<Ticket> getTickets() {

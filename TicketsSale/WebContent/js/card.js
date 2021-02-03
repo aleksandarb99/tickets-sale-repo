@@ -12,14 +12,14 @@ Vue.component("card", {
     },
   },
   template: ` 
-    <div class="col">
+    <div class="col zoom">
         <a :href="'http://127.0.0.1:9001/TicketsSale/#/showCard/'.concat(name)">
-          <div class="card shadow-sm" v-on:click="showCard">
+          <div class="card shadow-sm text-dark bg-light" v-on:click="showCard">
             <img class="bd-placeholder-img card-img-top" :src="image" alt="" width="100%" height="225" >
             <div class="card-body">
-                <p class="card-text">Name : {{name}}.</p>
-                <p class="card-text">Location : {{location}}.</p>
-                <p class="card-text">Date : {{date | dateFormat('DD.MM.YYYY')}}.</p>
+                <h5 class="card-title">{{name}}</h5>
+                <p class="card-text">{{location}}.</p>
+                <p class="card-text">{{date | dateFormat('DD.MM.YYYY')}}.</p>
             </div>
           </div>
         </a>

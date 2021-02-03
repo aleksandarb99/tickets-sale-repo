@@ -2,15 +2,27 @@ package model;
 
 public class Location {
 	
+	private int id;
 	private double longitude;
 	private double latitude;
 	private String address;
 	
-	public Location(double longitude, double latitude, String address) {
+	public Location() {}
+	
+	public Location(int id, double longitude, double latitude, String address) {
 		super();
+		this.id = id;
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.address = address;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public double getLongitude() {
