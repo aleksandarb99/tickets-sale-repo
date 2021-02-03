@@ -3,17 +3,19 @@ package model;
 import java.util.Date;
 
 public abstract class User {
-	private String username;
-	private String password;
-	private String name;
-	private String lastName;
-	private Gender gender;
 	private Date dateOfBirth;
+	private Gender gender;
 	private boolean isDeleted;
-	
-	public User() {}
-	
-	public User(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth, boolean isDeleted) {
+	private String lastName;
+	private String name;
+	private String password;
+	private String username;
+
+	public User() {
+	}
+
+	public User(String username, String password, String name, String lastName, Gender gender, Date dateOfBirth,
+			boolean isDeleted) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -24,68 +26,60 @@ public abstract class User {
 		this.isDeleted = isDeleted;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public Date getDateOfBirth() {
+		return dateOfBirth;
 	}
 
 	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
+	public String getName() {
+		return name;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public String getPassword() {
+		return password;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 	public boolean isDeleted() {
 		return isDeleted;
 	}
 
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 
-	@Override
-	public String toString() {
-		return "User [username=" + username + ", password=" + password + ", name=" + name + ", lastName=" + lastName
-				+ ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", isDeleted=" + isDeleted + "]";
+	public void setGender(Gender gender) {
+		this.gender = gender;
 	}
-	
-	
-	
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 }

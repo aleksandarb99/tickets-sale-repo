@@ -1,11 +1,12 @@
 package model;
 
 public class CommentParams {
-	private String text;
-	private String manifestationName;
 	private int grade;
-	
-	public CommentParams() {}
+	private String manifestationName;
+	private String text;
+
+	public CommentParams() {
+	}
 
 	public CommentParams(String text, String manifestationName, int grade) {
 		super();
@@ -14,27 +15,27 @@ public class CommentParams {
 		this.grade = grade;
 	}
 
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
+	public int getGrade() {
+		return grade;
 	}
 
 	public String getManifestationName() {
 		return manifestationName;
 	}
 
-	public void setManifestationName(String manifestationName) {
-		this.manifestationName = manifestationName;
-	}
-
-	public int getGrade() {
-		return grade;
+	public String getText() {
+		return text;
 	}
 
 	public void setGrade(int grade) {
 		this.grade = grade;
+	}
+
+	public void setManifestationName(String manifestationName) {
+		this.manifestationName = manifestationName;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 }

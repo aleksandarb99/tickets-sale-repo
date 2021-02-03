@@ -1,7 +1,5 @@
 package model;
 
 public enum CommentState {
-	IN_PROGRESS,
-	APPROVED,
-	REJECTED
+	APPROVED, IN_PROGRESS, REJECTED
 }

@@ -18,47 +18,61 @@ import model.Ticket;
 import model.TicketState;
 import model.TypeOfTicket;
 
-
 public class TicketDAO {
-	private Map<String, Ticket> tickets = new HashMap<>();	
-	
-	public TicketDAO() {}
-		
+	private Map<String, Ticket> tickets = new HashMap<>();
+
+	public TicketDAO() {
+	}
+
 	public TicketDAO(String contextPath, ManifestationDAO dao) {
 		loadData(contextPath, dao);
 	}
-	
-	public Ticket find(String id) {
-		return tickets.containsKey(id) ? tickets.get(id) : null;
-	}
-	
-	public Collection<Ticket> findAll() {
-		return tickets.values();
-	}
-	
-	public Collection<Ticket> findTickets(Manifestation manifestation) {
-		Collection<Ticket> collection = tickets.values().stream()
-				.filter(t -> t.getReservedManifestation().getName().equals(manifestation.getName())).collect(Collectors.toList());
-		return collection;
-	}
-	
+
 	public Ticket addTicket(Ticket ticket) {
 		tickets.put(ticket.getId(), ticket);
 		return ticket;
 	}
-	
+
 	private Double calculatePrice(Double regular, TypeOfTicket type) {
-		if(type.equals(TypeOfTicket.VIP)) return regular * 4;
-		if(type.equals(TypeOfTicket.FAN_PIT)) return regular * 2;
+		if (type.equals(TypeOfTicket.VIP))
+			return regular * 4;
+		if (type.equals(TypeOfTicket.FAN_PIT))
+			return regular * 2;
 		return regular;
 	}
-	
+
+	public Ticket find(String id) {
+		return tickets.containsKey(id) ? tickets.get(id) : null;
+	}
+
+	public Collection<Ticket> findAll() {
+		return tickets.values();
+	}
+
+	public Collection<Ticket> findTickets(Manifestation manifestation) {
+		Collection<Ticket> collection = tickets.values().stream()
+				.filter(t -> t.getReservedManifestation().getName().equals(manifestation.getName()))
+				.collect(Collectors.toList());
+		return collection;
+	}
+
+	public String getNextId() {
+		String size = (tickets.values().size() + 1) + "";
+		while (true) {
+			if (size.length() == 10) {
+				break;
+			}
+			size = "0" + size;
+		}
+		return size;
+	}
+
 	private void loadData(String contextPath, ManifestationDAO dao) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		BufferedReader in = null;
 		try {
 			String separator = System.getProperty("file.separator");
-			File file = new File(contextPath + "data" +separator+ "tickets.txt");
+			File file = new File(contextPath + "data" + separator + "tickets.txt");
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			StringTokenizer st;
@@ -78,7 +92,7 @@ public class TicketDAO {
 					Manifestation manifestation = dao.find(manifestationName);
 					Double price = calculatePrice(manifestation.getPriceOfRegularTicket(), type);
 					tickets.put(id, new Ticket(id, manifestation, date, price, nameLastName, state, type, deleted));
-				}		
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -86,16 +100,16 @@ public class TicketDAO {
 			if (in != null) {
 				try {
 					in.close();
+				} catch (Exception e) {
 				}
-				catch (Exception e) { }
 			}
 		}
 	}
-	
+
 	public void saveData(String contextPath) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 		StringBuilder builder = new StringBuilder();
-		for(Ticket t : tickets.values()) {
+		for (Ticket t : tickets.values()) {
 			builder.append(t.getId() + ";");
 			builder.append(t.getReservedManifestation().getName() + ";");
 			builder.append(t.getNameLastName() + ";");
@@ -107,7 +121,7 @@ public class TicketDAO {
 		}
 		try {
 			String separator = System.getProperty("file.separator");
-			File file = new File(contextPath + "data" +separator+ "tickets.txt");
+			File file = new File(contextPath + "data" + separator + "tickets.txt");
 			PrintWriter myWriter = new PrintWriter(file);
 			myWriter.write(builder.toString());
 			myWriter.close();
@@ -116,15 +130,4 @@ public class TicketDAO {
 		}
 	}
 
-	public String getNextId() {
-		String size = (tickets.values().size()+1) + "";
-		while (true) {
-			if(size.length()==10) {
-				break;
-			}
-			size = "0"+size;
-		}
-		return size;
-	}
-	
 }

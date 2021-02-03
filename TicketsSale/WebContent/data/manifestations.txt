@@ -1,4 +1,4 @@
-IVAN BOSILJIC - NASE VECE;THEATER;250;28.01.2021. 18:00;650.0;ACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/002/456/ivan-bosiljcic-nase-vece-474-279-14054.jpg;false
+IVAN BOSILJIC - NASE VECE;THEATER;250;28.01.2021. 18:00;650.0;INACTIVE;1;https://pb2eu.interticket.com/imgs/system-20/program/000/002/456/ivan-bosiljcic-nase-vece-474-279-14054.jpg;false
 GUITAR ART FESTIVAL XXI;FESTIVAL;250;28.01.2021. 14:00;1000.0;INACTIVE;2;https://pb2eu.interticket.com/imgs/system-20/program/000/001/728/xxi-guitar-art-festival-40-fingers-474-279-13768.jpg;false
 ZDRAVKO COLIC;CONCERT;1000;22.01.2021. 11:00;1000.0;INACTIVE;4;https://pb2eu.interticket.com/imgs/system-20/program/000/002/070/zdravko-colic-474-279-13191.jpg;true
 BAAL;THEATER;50;13.02.2021. 17:30;500.0;ACTIVE;5;https://pb2eu.interticket.com/imgs/system-20/program/000/002/444/baal-474-279-14030.jpg;false
