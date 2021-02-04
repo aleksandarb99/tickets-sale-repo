@@ -209,6 +209,7 @@ Vue.component("manifestations", {
                   <th v-if="userType=='ADMIN'" scope="col">Logical Delete</th>
                 </tr>
               </thead>
+              <tbody>
                 <tr v-for="(m,index) in manifestations" @click="selectManifestation(m)" v-bind:class="{selected : selectedManifestation.name===m.name}">
                   <td scope="row">{{index + 1}}</td>
                   <td>{{m.name}}</th>
@@ -221,6 +222,7 @@ Vue.component("manifestations", {
                   <td v-if="userType=='SELLER'"><a @click="getTickets(m)" href="#tickets"><img style="height:30px;width:60px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF32Nl4zE14X9V8-N-TvjU8cmnuOZsecgBuw&usqp=CAU"></img></a></td>
                   <td v-if="userType=='ADMIN'"><button v-if="checkIfDeleted(m)" @click="del($event,m)" type="button" class="btn btn-secondary btn-sm">Delete</button></td>
                   </tr>
+                  </tbody>
             </table>
 
             <button v-if="userType!='ADMIN'" class="btn btn-lg btn-primary" v-on:click="addManifestation">Add</button>

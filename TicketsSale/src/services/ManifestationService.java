@@ -1,5 +1,6 @@
 package services;
 
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,16 +19,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import dao.LocationDAO;
-import dao.ManifestationDAO;
-import dao.UserDAO;
 import model.Location;
 import model.Manifestation;
 import model.ManifestationDTO;
 import model.ManifestationState;
 import model.QueryParams;
 import model.Seller;
-import model.Ticket;
 import dao.CommentDAO;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
@@ -83,6 +80,14 @@ public class ManifestationService {
 		}
 	}
 	
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAll().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
+	}
+	
 	@POST
 	@Path("/delete/")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -95,6 +100,37 @@ public class ManifestationService {
 		
 		Manifestation t = dao2.find(name);
 		t.setDeleted(true);
+
+		dao2.saveData(ctx.getRealPath(""));
+	}
+	
+	@GET
+	@Path("/inactive")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getInactiveManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAllInactive();
+	}
+	
+	@GET
+	@Path("/recent/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getRecentManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findRecent().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
+	}
+	
+	@GET
+	@Path("/{name: .+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Manifestation getManifestation(@PathParam("name") String name) {
+		
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		Manifestation m = dao.find(name);
+		if(m.isDeleted()) {
+			return null;
+		}
+		return dao.find(name);
 	}
 
 	@POST
@@ -148,37 +184,20 @@ public class ManifestationService {
 
 		return null;
 	}
-
-	@GET
-	@Path("/all/")
+	
+	@POST
+	@Path("/update/")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getAllManifestations() {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findAll();
-	}
-
-	@GET
-	@Path("/inactive")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getInactiveManifestations() {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findAllInactive();
-	}
-
-	@GET
-	@Path("/{name: .+}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Manifestation getManifestation(@PathParam("name") String name, ManifestationDTO dto) {
-
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		Manifestation m = dao.find(name);
-		if (m.isDeleted()) {
+	public Manifestation updateManifestation(@Context HttpServletRequest request, ManifestationDTO dto) {
+		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
 			return null;
+		}
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		UserDAO daoUser = (UserDAO) ctx.getAttribute("UserDAO");
 		TicketDAO daoT = (TicketDAO) ctx.getAttribute("TicketDAO");
 		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
 		CommentDAO daoComment = (CommentDAO) ctx.getAttribute("CommentDAO");
-		Manifestation oldManifestation = dao.find(dto.getOldName());
 		
 		if(!dao.checkDateAndLocation(dto.getManifestation())) return null;
 		
@@ -200,23 +219,17 @@ public class ManifestationService {
 			dao.saveData(ctx.getRealPath(""));
 			return retM;
 		}
-		return dao.find(name);
+		
+		return null;
+		
 	}
 
 	@GET
-	@Path("/")
+	@Path("/all/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getManifestations() {
+	public Collection<Manifestation> getAllManifestations() {
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findAll().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
-	}
-
-	@GET
-	@Path("/recent/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getRecentManifestations() {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findRecent().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
+		return dao.findAll();
 	}
 
 	@POST
@@ -277,38 +290,6 @@ public class ManifestationService {
 		}
 
 		return collection.stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
-	}
-
-	@POST
-	@Path("/update/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Manifestation updateManifestation(@Context HttpServletRequest request, ManifestationDTO dto) {
-		if (request.getSession().getAttribute("user") == null) { // Provera da li je korisnik vec ulogovan
-			return null;
-		}
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
-
-		if (!dao.checkDateAndLocation(dto.getManifestation()))
-			return null;
-
-		if (dao.find(dto.getManifestation().getName()) != null
-				&& dto.getOldName().equals(dto.getManifestation().getName())) {
-			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
-			daoLocation.saveData(ctx.getRealPath(""));
-			dao.saveData(ctx.getRealPath(""));
-			return retM;
-		}
-		if (dao.find(dto.getManifestation().getName()) == null) {
-			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
-			daoLocation.saveData(ctx.getRealPath(""));
-			dao.saveData(ctx.getRealPath(""));
-			return retM;
-		}
-
-		return null;
-
 	}
 
 	private boolean validateParams(QueryParams params) {
