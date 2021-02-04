@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import dao.CommentDAO;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
 import dao.TicketDAO;
@@ -294,6 +295,7 @@ public class UserService {
 		LocationDAO locationDAO = null;
 		TicketDAO ticketDAO = null;
 		ManifestationDAO manifestationDAO = null;
+		UserDAO userDAO = null;
 		if (ctx.getAttribute("LocationDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			locationDAO = new LocationDAO(contextPath);
@@ -317,7 +319,14 @@ public class UserService {
 		}
 		if (ctx.getAttribute("UserDAO") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("UserDAO", new UserDAO(contextPath, ticketDAO, manifestationDAO));
+			userDAO = new UserDAO(contextPath, ticketDAO, manifestationDAO);
+			ctx.setAttribute("UserDAO", userDAO);
+		} else {
+			userDAO = (UserDAO) ctx.getAttribute("UserDAO");
+		}
+		if (ctx.getAttribute("CommentDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("CommentDAO", new CommentDAO(contextPath, manifestationDAO, userDAO));
 		}
 	}
 
@@ -337,14 +346,17 @@ public class UserService {
 		}
 		User loggedUser = (User) request.getSession().getAttribute("user");
 		UserDAO dao = (UserDAO) ctx.getAttribute("UserDAO");
+		CommentDAO daoComment = (CommentDAO) ctx.getAttribute("CommentDAO");
 		if (dao.find(user.getUsername()) != null && user.getUsername().equals(loggedUser.getUsername())) {
 			User retUser = dao.updateUser(loggedUser.getUsername(), user);
 			dao.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
 			return retUser;
 		}
 		if (dao.find(user.getUsername()) == null) {
 			User retUser = dao.updateUser(loggedUser.getUsername(), user);
 			dao.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
 			return retUser;
 		}
 
