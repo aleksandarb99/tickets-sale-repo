@@ -1,6 +1,5 @@
 package model;
 
 public enum TicketState {
-	RESERVED,
-	CANCELED
+	CANCELED, RESERVED
 }

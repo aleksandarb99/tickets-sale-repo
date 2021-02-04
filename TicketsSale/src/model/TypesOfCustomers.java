@@ -1,7 +1,5 @@
 package model;
 
 public enum TypesOfCustomers {
-	GOLD,
-	SILVER,
-	BRONZE
+	BRONZE, GOLD, SILVER
 }

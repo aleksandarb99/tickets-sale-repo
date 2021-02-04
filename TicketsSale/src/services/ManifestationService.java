@@ -25,7 +25,7 @@ import model.ManifestationDTO;
 import model.ManifestationState;
 import model.QueryParams;
 import model.Seller;
-import model.Ticket;
+import dao.CommentDAO;
 import dao.LocationDAO;
 import dao.ManifestationDAO;
 import dao.TicketDAO;
@@ -33,28 +33,59 @@ import dao.UserDAO;
 
 @Path("/manifestations")
 public class ManifestationService {
-	
+
 	@Context
 	ServletContext ctx;
-	
+
 	public ManifestationService() {
 	}
 	
 	@PostConstruct
 	public void init() {
-		LocationDAO locationDAO;
+		LocationDAO locationDAO = null;
+		TicketDAO ticketDAO = null;
+		ManifestationDAO manifestationDAO = null;
+		UserDAO userDAO = null;
 		if (ctx.getAttribute("LocationDAO") == null) {
-	    	String contextPath = ctx.getRealPath("");
+	    	String contextPath = ctx.getRealPath("");    	
 	    	locationDAO = new LocationDAO(contextPath);
 			ctx.setAttribute("LocationDAO", locationDAO);
 		} else {
 			locationDAO = (LocationDAO) ctx.getAttribute("LocationDAO");
 		}
-		
 		if (ctx.getAttribute("ManifestationDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("ManifestationDAO", new ManifestationDAO(contextPath, locationDAO));
+	    	manifestationDAO = new ManifestationDAO(contextPath, locationDAO);
+			ctx.setAttribute("ManifestationDAO", manifestationDAO);
+		} else {
+			manifestationDAO = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		}
+		if (ctx.getAttribute("TicketDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	ticketDAO = new TicketDAO(contextPath, manifestationDAO);
+			ctx.setAttribute("TicketDAO", ticketDAO);
+		} else {
+			ticketDAO = (TicketDAO) ctx.getAttribute("TicketDAO");
+		}
+		if (ctx.getAttribute("UserDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+	    	userDAO = new UserDAO(contextPath, ticketDAO, manifestationDAO);
+			ctx.setAttribute("UserDAO", userDAO);
+		} else {
+			userDAO = (UserDAO) ctx.getAttribute("UserDAO");
+		}
+		if (ctx.getAttribute("CommentDAO") == null) {
+	    	String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("CommentDAO", new CommentDAO(contextPath, manifestationDAO, userDAO));
+		}
+	}
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAll().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
 	}
 	
 	@POST
@@ -74,15 +105,6 @@ public class ManifestationService {
 	}
 	
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Manifestation> getManifestations() {
-		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findAll().stream()
-		.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
-	}
-	
-	@GET
 	@Path("/inactive")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getInactiveManifestations() {
@@ -95,8 +117,7 @@ public class ManifestationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getRecentManifestations() {
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		return dao.findRecent().stream()
-				.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
+		return dao.findRecent().stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
 	}
 	
 	@GET
@@ -111,29 +132,30 @@ public class ManifestationService {
 		}
 		return dao.find(name);
 	}
-	
+
 	@POST
 	@Path("/add/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Manifestation addManifestation(@Context HttpServletRequest request, Manifestation manifestation) {
-		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+		if (request.getSession().getAttribute("user") == null) {
 			return null;
 		}
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		if(dao.find(manifestation.getName()) != null) {
+		if (dao.find(manifestation.getName()) != null) {
 			return null;
 		}
-		if(!dao.checkDateAndLocation(manifestation)) return null;
-		
-		Seller seller = (Seller)request.getSession().getAttribute("user");
+		if (!dao.checkDateAndLocation(manifestation))
+			return null;
+
+		Seller seller = (Seller) request.getSession().getAttribute("user");
 		manifestation.setState(ManifestationState.INACTIVE);
-		Manifestation addedManifestation = (Manifestation)dao.addManifestation(manifestation);
+		Manifestation addedManifestation = dao.addManifestation(manifestation);
 		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
 		Location location = daoLocation.checkLocation(manifestation.getLocation());
-		if(location != null) {
+		if (location != null) {
 			manifestation.setLocation(location);
-		}else {
+		} else {
 			manifestation.setLocation(daoLocation.addLocation(manifestation.getLocation()));
 		}
 		seller.addManifestation(addedManifestation);
@@ -143,23 +165,23 @@ public class ManifestationService {
 		daoUser.saveData(ctx.getRealPath(""));
 		return addedManifestation;
 	}
-	
+
 	@POST
 	@Path("/approve/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Manifestation approveManifestation(@Context HttpServletRequest request, Manifestation manifestation) {
-		if(request.getSession().getAttribute("user") == null) {			//Provera da li je korisnik vec ulogovan
+		if (request.getSession().getAttribute("user") == null) {
 			return null;
 		}
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
 		boolean retVal = dao.disableManifestation(manifestation);
-		
-		if(retVal) {
+
+		if (retVal) {
 			dao.saveData(ctx.getRealPath(""));
 			return manifestation;
 		}
-		
+
 		return null;
 	}
 	
@@ -172,18 +194,27 @@ public class ManifestationService {
 			return null;
 		}
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		UserDAO daoUser = (UserDAO) ctx.getAttribute("UserDAO");
+		TicketDAO daoT = (TicketDAO) ctx.getAttribute("TicketDAO");
 		LocationDAO daoLocation = (LocationDAO) ctx.getAttribute("LocationDAO");
+		CommentDAO daoComment = (CommentDAO) ctx.getAttribute("CommentDAO");
 		
 		if(!dao.checkDateAndLocation(dto.getManifestation())) return null;
 		
 		if(dao.find(dto.getManifestation().getName()) != null && dto.getOldName().equals(dto.getManifestation().getName())) {
 			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoUser.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
+			daoT.saveData(ctx.getRealPath(""));
 			daoLocation.saveData(ctx.getRealPath(""));
 			dao.saveData(ctx.getRealPath(""));
 			return retM;
 		}
 		if(dao.find(dto.getManifestation().getName()) == null) {
 			Manifestation retM = dao.updateManifestation(dto.getOldName(), dto.getManifestation(), daoLocation);
+			daoUser.saveData(ctx.getRealPath(""));
+			daoComment.saveData(ctx.getRealPath(""));
+			daoT.saveData(ctx.getRealPath(""));
 			daoLocation.saveData(ctx.getRealPath(""));
 			dao.saveData(ctx.getRealPath(""));
 			return retM;
@@ -193,88 +224,96 @@ public class ManifestationService {
 		
 	}
 
+	@GET
+	@Path("/all/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Manifestation> getAllManifestations() {
+		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
+		return dao.findAll();
+	}
+
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Manifestation> getSearchedManifestations(QueryParams params) {
-		
-		if(!validateParams(params)) {
+
+		if (!validateParams(params)) {
 			return new ArrayList<Manifestation>();
 		}
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		ManifestationDAO dao = (ManifestationDAO) ctx.getAttribute("ManifestationDAO");
-		
+
 		Collection<Manifestation> collection = dao.findAll();
-				
-		if(!params.getName().equals("")) {
-			collection = collection.stream()
-				.filter(manifestation -> manifestation.getName().toLowerCase().startsWith(params.getName().toLowerCase())).collect(Collectors.toList());
+
+		if (!params.getName().equals("")) {
+			collection = collection.stream().filter(
+					manifestation -> manifestation.getName().toLowerCase().startsWith(params.getName().toLowerCase()))
+					.collect(Collectors.toList());
 		}
-		
-		if(!params.getLocation().equals("")) {
-			collection = collection.stream()
-				.filter(manifestation -> manifestation.getLocation().getAddress().toLowerCase().contains(params.getLocation().toLowerCase())).collect(Collectors.toList());
+
+		if (!params.getLocation().equals("")) {
+			collection = collection.stream().filter(manifestation -> manifestation.getLocation().getAddress()
+					.toLowerCase().contains(params.getLocation().toLowerCase())).collect(Collectors.toList());
 		}
-		if(!params.getPriceFrom().equals("")) {
-			collection = collection.stream()
-				.filter(manifestation -> manifestation.getPriceOfRegularTicket() > Double.parseDouble(params.getPriceFrom())).collect(Collectors.toList());
+		if (!params.getPriceFrom().equals("")) {
+			collection = collection.stream().filter(manifestation -> manifestation.getPriceOfRegularTicket() > Double
+					.parseDouble(params.getPriceFrom())).collect(Collectors.toList());
 		}
-		
-		if(!params.getPriceUntil().equals("")) {
-			collection = collection.stream()
-					.filter(manifestation -> manifestation.getPriceOfRegularTicket() < Double.parseDouble(params.getPriceUntil())).collect(Collectors.toList());
+
+		if (!params.getPriceUntil().equals("")) {
+			collection = collection.stream().filter(manifestation -> manifestation.getPriceOfRegularTicket() < Double
+					.parseDouble(params.getPriceUntil())).collect(Collectors.toList());
 		}
-		
-		if(!params.getDateFrom().equals("")) {	
+
+		if (!params.getDateFrom().equals("")) {
 			try {
 				final Date d = sdf.parse(params.getDateFrom());
-				collection = collection.stream()
-						.filter(manifestation -> manifestation.getDate().after(d)).collect(Collectors.toList());
+				collection = collection.stream().filter(manifestation -> manifestation.getDate().after(d))
+						.collect(Collectors.toList());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		
+
 		}
-		
-		if(!params.getDateUntil().equals("")) {
+
+		if (!params.getDateUntil().equals("")) {
 			try {
 				final Date d = sdf.parse(params.getDateUntil());
-				collection = collection.stream()
-						.filter(manifestation -> manifestation.getDate().before(d)).collect(Collectors.toList());
+				collection = collection.stream().filter(manifestation -> manifestation.getDate().before(d))
+						.collect(Collectors.toList());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
-		return collection.stream()
-				.filter(t -> t.isDeleted()==false).collect(Collectors.toList());
+
+		return collection.stream().filter(t -> t.isDeleted() == false).collect(Collectors.toList());
 	}
-	
+
 	private boolean validateParams(QueryParams params) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			double num;
-			if(!params.getPriceFrom().equals("")) {
+			if (!params.getPriceFrom().equals("")) {
 				num = Double.parseDouble(params.getPriceFrom());
 			}
-			if(!params.getPriceUntil().equals("")) {
+			if (!params.getPriceUntil().equals("")) {
 				num = Double.parseDouble(params.getPriceUntil());
 			}
-			
+
 			Date d;
-			if(!params.getDateFrom().equals("")) {
+			if (!params.getDateFrom().equals("")) {
 				d = sdf.parse(params.getDateFrom());
 			}
-			if(!params.getDateFrom().equals("")) {
+			if (!params.getDateFrom().equals("")) {
 				d = sdf.parse(params.getDateFrom());
-			}				
+			}
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 }

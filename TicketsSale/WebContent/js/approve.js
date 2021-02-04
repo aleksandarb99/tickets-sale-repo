@@ -24,30 +24,6 @@ Vue.component("approve", {
     },
   },
   methods: {
-    del: function (event, m) {
-      event.target.disabled = true;
-      axios
-        .post("/TicketsSale/rest/manifestations/delete/", m.name, {
-          headers: {
-            "Content-Type": "text/plain",
-          },
-        })
-        .then((response) => {
-          m.deleted = true;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    checkIfDeleted: function (m) {
-      if (m.deleted != undefined) {
-        if (m.deleted) {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    },
     getInactiveManifestations: function () {
       axios
         .get("/TicketsSale/rest/manifestations/inactive")
@@ -101,7 +77,6 @@ Vue.component("approve", {
                   <th scope="col">Status</th>
                   <th scope="col">Location</th>
                   <th scope="col">Tickets</th>
-                  <th scope="col">Logical Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -115,7 +90,6 @@ Vue.component("approve", {
                   <td>{{m.state}}</td>
                   <td>{{m.location.address}}</td>
                   <td><a @click="approveManifestation(m)"><img style="height:30px;width:60px;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF32Nl4zE14X9V8-N-TvjU8cmnuOZsecgBuw&usqp=CAU"></img></a></td>
-                  <td><button v-if="checkIfDeleted(m)" @click="del($event,m)" type="button" class="btn btn-secondary btn-sm">Delete</button></td>
                   </tr>
                </tbody>
             </table>

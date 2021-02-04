@@ -48,7 +48,7 @@ Vue.component("profile", {
         lastName: this.user.lastName,
         gender: this.user.gender,
         dateOfBirth: this.user.dateOfBirth,
-        isBlocked: false,
+        isDeleted: this.user.isDeleted,
       };
       axios
         .post("/TicketsSale/rest/users/updateUser/", sendData)
